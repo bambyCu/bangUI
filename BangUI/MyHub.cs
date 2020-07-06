@@ -19,7 +19,7 @@ namespace SignalRTutorial
         {
             if (Logged.Contains(username)) { return false; }
             Logged.Add(username);
-            Clients.All.AddPlayer(username);
+            Clients.All.LogIn(username);
             return true;
         }
 

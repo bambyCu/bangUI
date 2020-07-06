@@ -145,7 +145,8 @@
     </Compile>
     <Compile Include="MyHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="Scripts\login-js.js" />
+    <Content Include="Scripts\base.js" />
+    <Content Include="Scripts\login.js" />
     <Content Include="Scripts\MyJavaS.js" />
     <Compile Include="Startup1.cs" />
   </ItemGroup>
@@ -188,6 +189,7 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\LogIn.cshtml" />
+    <Content Include="Views\Home\Base.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

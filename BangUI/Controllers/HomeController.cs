@@ -32,5 +32,10 @@ namespace BangUI.Controllers
 
             return View();
         }
+        public ActionResult Base()
+        {
+            
+            return View();
+        }
     }
 }

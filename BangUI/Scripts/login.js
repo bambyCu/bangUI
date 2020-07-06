@@ -4,10 +4,6 @@
     $.connection.hub.start()
         .done(function () {
             console.log("hub is alive bitch");
-            //myHub.server.announce("hector ");
-            //myHub.server.date()
-            //    .done(function (data) { writeTestText(data); })
-            //    .fail(function (ex) { writeTestText(ex); })
         })
         .fail(function () { alert("this doesn't works, bitch"); });
 
@@ -18,7 +14,6 @@
     myHub.client.logIn = function (user) {
         writeTestText(user);
         document.cookie = "username=" + user;
-        myHub.client.getUsers();
     }
 
     var writeTestText = function (message) { $("#test_text").append(message + "<br/>"); }
@@ -28,7 +23,7 @@
             .done(function (data) {
                 if (data === true) {
                     console.log("deed has been done");
-                    window.location.href = "Index"
+                    window.location.href = "Base"
                 }
                 else {
                     $("#message").text($("#username").first().val() + " is used");
