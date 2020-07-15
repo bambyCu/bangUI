@@ -3,8 +3,26 @@
 }
 @section scripts{
 
-
-<script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
-<script src="~/signalr/js"></script>
-<script src="~/bundle"></script>
-<script src="~/Scripts/base.js"></script>}
+    <div class=" fixed-top w-100 align-top" style="height: 100vh;">
+        <div class="row h-100 w-100 align-items-center">
+            <div class="container h-100 text-white col bg-info">
+                <div class="d-flex justify-content-center">name:</div>
+                <div class="w-100 row bg-danger mx-auto">
+                    <img class="w-100 " src="~/Content/Images/heroes/bartcassidy.png" alt="Max-width 100%">
+                </div>
+                <div href="heroLives">lives:</div>
+            </div>
+            <div class="container h-100 text-white col-6 bg-primary">
+            </div>
+            <div class="container h-100 text-white col bg-info">
+                <div id="loggedList" class="list-group">
+                    <div class="list-group-item list-group-item-secondary">Logged users:</div>
+                    <button id="her" type="button" class="list-group-item">name</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
+    <script src="~/signalr/js"></script>
+    <script src="~/Scripts/base.js"></script>
+}

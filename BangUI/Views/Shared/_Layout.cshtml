@@ -7,25 +7,15 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body class="mw-100 bg-secondary" style="height: 100vh;">
-        <div class="row h-100">
-            <div class="h-100 text-white col bg-info">
-                1 of 3
-            </div>
-            <div class="h-100 text-white col-6 bg-primary">
-                2 of 3 (wider)
-            </div>
-            <div class="h-100 text-white col bg-info">
-                3 of 3
-            </div>
-        </div>
-        @RenderBody()
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
+<body>
+
+    @RenderBody()
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <footer class="card-footer">
+        <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+    </footer>
 </body>
 </html>

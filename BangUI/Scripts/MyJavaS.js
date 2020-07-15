@@ -32,4 +32,6 @@
         myHub.server.announce($("#message").first().val());
         $("#message").val("");
     });
+
+    
 })()
