@@ -6,7 +6,7 @@
     <div class=" fixed-top w-100 align-top" style="height: 100vh;">
         <div class="row h-100 w-100 align-items-center">
             <div class="container h-100 text-white col bg-info">
-                <div class="d-flex justify-content-center">name:</div>
+                <div id="nameHold" class="d-flex justify-content-center">name:</div>
                 <div class="w-100 row bg-danger mx-auto">
                     <img class="w-100 " src="~/Content/Images/heroes/bartcassidy.png" alt="Max-width 100%">
                 </div>
@@ -17,11 +17,27 @@
             <div class="container h-100 text-white col bg-info">
                 <div id="loggedList" class="list-group">
                     <div class="list-group-item list-group-item-secondary">Logged users:</div>
-                    <button id="her" type="button" class="list-group-item">name</button>
+                </div>
+                <button id="gameStarter" class="w-100 list-group-item bg-danger">
+                    Start game
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div id="modalBody"class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button id="invBtnYes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                    <button id="invBtnNo" type="button" class="btn btn-primary" data-dismiss="modal">No</button>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
     <script src="~/signalr/js"></script>
     <script src="~/Scripts/base.js"></script>

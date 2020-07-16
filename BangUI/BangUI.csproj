@@ -145,6 +145,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BangEnum\CardColor.cs" />
+    <Compile Include="Models\BangEnum\CardValues.cs" />
+    <Compile Include="Models\BangEnum\Hero.cs" />
+    <Compile Include="Models\BangEnum\PlayCard.cs" />
+    <Compile Include="Models\BangEnum\Role.cs" />
+    <Compile Include="Models\Card.cs" />
+    <Compile Include="Models\CardInfo.cs" />
+    <Compile Include="Models\Deck.cs" />
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\IComunicationCanal.cs" />
+    <Compile Include="Models\Player.cs" />
+    <Compile Include="Models\TestCanal.cs" />
     <Compile Include="MyHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Content\bootstrap-grid.css" />
@@ -254,7 +266,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
