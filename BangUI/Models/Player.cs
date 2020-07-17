@@ -16,21 +16,43 @@ namespace BangGame
         public int SeeingDistance { get; set; }
         public int SeeingAttackDistance { get; set; }
         public int MaxHealth { get; set; }
-        public int Lives { get; set; }
+        public int Health { get; set; }
 
-        public Player(string name)
+        public Player(string name, string heroType, string roleType, int distanceFromOthers, int seeingDistance, int seeingAttackDistance, int maxHealt)
         {
             Name = name;
+            HeroType = (Hero)Enum.Parse(typeof(Hero), heroType, true);
+            RoleType = (Role)Enum.Parse(typeof(Role), roleType, true); ;
+            DistanceFromOthers = distanceFromOthers;
+            SeeingDistance = seeingDistance;
+            SeeingAttackDistance = seeingAttackDistance;
+            if (RoleType == Role.Sherif) { maxHealt++; }
+            MaxHealth = maxHealt;
+            Health = maxHealt;
         }
 
-        public Player(int Lives, int DistanceFromOthers, int SeeingDistance, int SeeingAttackDistance, string HeroType)
+        public Player(string name, Hero heroType, Role roleType, int distanceFromOthers, int seeingDistance, int seeingAttackDistance, int maxHealt)
         {
-            this.HeroType = (Hero)Enum.Parse(typeof(Hero), HeroType, true);
-            this.DistanceFromOthers = DistanceFromOthers;
-            this.Lives = Lives;
-            this.MaxHealth = Lives;
-            this.SeeingAttackDistance = SeeingAttackDistance;
-            this.SeeingDistance = SeeingDistance;
+            Name = name;
+            HeroType = heroType;
+            RoleType = roleType;
+            DistanceFromOthers = distanceFromOthers;
+            SeeingDistance = seeingDistance;
+            SeeingAttackDistance = seeingAttackDistance;
+            if (RoleType == Role.Sherif) { maxHealt++; }
+            MaxHealth = maxHealt;
+            Health = maxHealt;
+        }
+
+        public Player(string heroType, int distanceFromOthers, int seeingDistance, int seeingAttackDistance, int maxHealt)
+        {
+            HeroType = (Hero)Enum.Parse(typeof(Hero), heroType, true);
+            DistanceFromOthers = distanceFromOthers;
+            SeeingDistance = seeingDistance;
+            SeeingAttackDistance = seeingAttackDistance;
+            if (RoleType == Role.Sherif) { maxHealt++; }
+            MaxHealth = maxHealt;
+            Health = maxHealt;
         }
 
 
@@ -93,7 +115,7 @@ namespace BangGame
             if (CardInfo.IsCardBlue(c)) { return ApplyBlueCard(c); }
             if (c.Type == PlayCard.Beer)
             {
-                if (Lives < MaxHealth) { Lives++; }
+                if (Health < MaxHealth) { Health++; }
                 return c;
             }
             throw (new Exception("It seems that CardInfo is not correctly setup"));

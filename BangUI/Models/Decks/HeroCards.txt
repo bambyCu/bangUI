@@ -1,0 +1,107 @@
+﻿[
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Bart_Cassidy",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Black_Jack",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Calamity_Janet",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "El_Gringo",
+    "MaxHealth": 3
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Jesse_jones",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Kit Carlson",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Lucky_Duke",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Paul_regret",
+    "MaxHealth": 3
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Pedro_Ramirez",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Rose_Doolan",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Sid_Ketchum",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Slab_The_Killer",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Suzy-Fafayette",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Vulture_Sam",
+    "MaxHealth": 4
+  },
+  {
+    "DistanceFromOthers": 1,
+    "SeeingDistance": 1,
+    "SeeingAttackDistance": 1,
+    "Hero": "Willy_The_Kid",
+    "MaxHealth": 4
+  }
+]

@@ -1,0 +1,541 @@
+﻿[
+  {
+    "Name": "Dinamite",
+    "Num": "2",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Dynamite"
+  },
+  {
+    "Name": "Barle",
+    "Num": "Q",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Barel"
+  },
+  {
+    "Name": "Barle",
+    "Num": "K",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Barel"
+  },
+  {
+    "Name": "Mirino",
+    "Num": "A",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Mirino"
+  },
+  {
+    "Name": "Mustang",
+    "Num": "8",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Mustang"
+  },
+  {
+    "Name": "Mustang",
+    "Num": "9",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Mustang"
+  },
+  {
+    "Name": "Prigione",
+    "Num": "J",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Prison"
+  },
+  {
+    "Name": "Prigione",
+    "Num": "10",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Prison"
+  },
+  {
+    "Name": "Prigione",
+    "Num": "4",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Prison"
+  },
+  {
+    "Name": "Rev. Carabine",
+    "Num": "A",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Carabine"
+  },
+  {
+    "Name": "Remington",
+    "Num": "K",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Schofield"
+  },
+  {
+    "Name": "Schofield",
+    "Num": "J",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Schofield"
+  },
+  {
+    "Name": "Schofield",
+    "Num": "Q",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Schofield"
+  },
+  {
+    "Name": "Schofield",
+    "Num": "K",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Schofield"
+  },
+  {
+    "Name": "Volcanic",
+    "Num": "10",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Volcanic"
+  },
+  {
+    "Name": "Volcanic",
+    "Num": "10",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Volcanic"
+  },
+  {
+    "Name": "Winchester",
+    "Num": "8",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Winchester"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "A",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "2",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "3",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "4",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "5",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "6",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "7",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "8",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "Q",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "K",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "A",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "2",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "3",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "4",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "5",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "6",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "7",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "8",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "9",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "10",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "J",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "Q",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "K",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Bang!",
+    "Num": "A",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Bang"
+  },
+  {
+    "Name": "Birra",
+    "Num": "6",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Beer"
+  },
+  {
+    "Name": "Birra",
+    "Num": "7",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Beer"
+  },
+  {
+    "Name": "Birra",
+    "Num": "8",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Beer"
+  },
+  {
+    "Name": "Birra",
+    "Num": "9",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Beer"
+  },
+  {
+    "Name": "Birra",
+    "Num": "10",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Beer"
+  },
+  {
+    "Name": "Birra",
+    "Num": "J",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Beer"
+  },
+  {
+    "Name": "Cat_Balou",
+    "Num": "K",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "CatBalou"
+  },
+  {
+    "Name": "Cat_Balou",
+    "Num": "9",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "CatBalou"
+  },
+  {
+    "Name": "Cat_Balou",
+    "Num": "10",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "CatBalou"
+  },
+  {
+    "Name": "Cat_Balou",
+    "Num": "J",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "CatBalou"
+  },
+  {
+    "Name": "Diligenza",
+    "Num": "9",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Diligenza"
+  },
+  {
+    "Name": "Diligenza",
+    "Num": "9",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Diligenza"
+  },
+  {
+    "Name": "Duello",
+    "Num": "Q",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Duel"
+  },
+  {
+    "Name": "Duello",
+    "Num": "J",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Duel"
+  },
+  {
+    "Name": "Duello",
+    "Num": "8",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Duel"
+  },
+  {
+    "Name": "Emporio",
+    "Num": "9",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Emporio"
+  },
+  {
+    "Name": "Emporio",
+    "Num": "Q",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Emporio"
+  },
+  {
+    "Name": "Gatling",
+    "Num": "10",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Gatling"
+  },
+  {
+    "Name": "Indiani!",
+    "Num": "K",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Indians"
+  },
+  {
+    "Name": "Indiani!",
+    "Num": "A",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Indians"
+  },
+  {
+    "Name": "Mancato!",
+    "Num": "10",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato!",
+    "Num": "J",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato!",
+    "Num": "Q",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato!",
+    "Num": "K",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato!",
+    "Num": "A",
+    "Color": "club",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato",
+    "Num": "2",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato",
+    "Num": "3",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato",
+    "Num": "4",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato",
+    "Num": "5",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato",
+    "Num": "6",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato",
+    "Num": "7",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Mancato",
+    "Num": "8",
+    "Color": "spade",
+    "Picture": "",
+    "Type": "Missed"
+  },
+  {
+    "Name": "Panico!",
+    "Num": "J",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Panic"
+  },
+  {
+    "Name": "Panico!",
+    "Num": "Q",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Panic"
+  },
+  {
+    "Name": "Panico!",
+    "Num": "A",
+    "Color": "heart",
+    "Picture": "",
+    "Type": "Panic"
+  },
+  {
+    "Name": "Panico!",
+    "Num": "8",
+    "Color": "diamond",
+    "Picture": "",
+    "Type": "Panic"
+  }
+]

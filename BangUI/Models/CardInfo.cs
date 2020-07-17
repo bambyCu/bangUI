@@ -1,15 +1,41 @@
-﻿using System;
+﻿using Microsoft.Ajax.Utilities;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace BangGame
 {
     public static class CardInfo
     {
+        public static List<Card> AvailableCards;
+        public static List<Player> HeroVals;
+
+        static CardInfo()
+        {
+            using (StreamReader sr = new StreamReader(@"C:\Users\sedif\source\repos\BangUI\BangUI\Models\Decks\HeroCards.txt"))
+            {
+                string line = sr.ReadToEnd();
+
+                HeroVals =
+                    JsonConvert.DeserializeAnonymousType(line, new[] { new { Hero = "", DistanceFromOthers = "", SeeingDistance = "", SeeingAttackDistance = "", MaxHealth = "" } })
+                        .Select(x => new Player(x.Hero, Int32.Parse(x.DistanceFromOthers), Int32.Parse(x.SeeingDistance), Int32.Parse(x.SeeingAttackDistance), Int32.Parse(x.MaxHealth)))
+                        .ToList();
+            }
+            using (StreamReader sr = new StreamReader(@"C:\Users\sedif\source\repos\BangUI\BangUI\Models\Decks\PlayingCards.txt"))
+            {
+                string line = sr.ReadToEnd();
+
+                AvailableCards = JsonConvert.DeserializeObject<Card[]>(line).ToList();
+            }
+        }
         //CARDS FOR CHANGING ATTACK DISTANCE AND BLUE CARDS 
-        private static List<PlayCard> Guns = new List<PlayCard>  
+        private static List<PlayCard> Guns = new List<PlayCard>
         {
             PlayCard.Remington,
             PlayCard.Carabine,
@@ -19,7 +45,7 @@ namespace BangGame
         };
 
         //REST OF BLUE CARDS 
-        private static List<PlayCard> SpecialBlueCards = new List<PlayCard> 
+        private static List<PlayCard> SpecialBlueCards = new List<PlayCard>
         {
             PlayCard.Barel,
             PlayCard.Dynamite,
@@ -28,7 +54,7 @@ namespace BangGame
             PlayCard.Prison
         };
 
-        private static Dictionary<PlayCard, int> GunDistanceMap = new Dictionary<PlayCard, int> 
+        private static Dictionary<PlayCard, int> GunDistanceMap = new Dictionary<PlayCard, int>
         {
             {PlayCard.Remington,2},
             {PlayCard.Carabine,3},
@@ -37,7 +63,7 @@ namespace BangGame
             {PlayCard.Winchester,4}
         };
 
-        private static List<PlayCard> SelfApplyCards =  Guns.
+        private static List<PlayCard> SelfApplyCards = Guns.
                                                         Concat(SpecialBlueCards).
                                                         Append(PlayCard.Beer).
                                                         ToList();
@@ -58,8 +84,15 @@ namespace BangGame
             PlayCard.Emporio,
             PlayCard.Indians};
 
-        
+        public static Dictionary<int, List<Role>> GameRoles = new Dictionary<int, List<Role>>()
+        {
+            { 4, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw} },
+            { 5, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw, Role.Deputy} },
+            { 6, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw, Role.Outlaw, Role.Deputy} },
+            { 7, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw, Role.Outlaw, Role.Deputy, Role.Deputy } }
+        };
 
+         
         public static bool IsCardBlue(Card c)
         {
             return Guns.Contains(c.Type) || SpecialBlueCards.Contains(c.Type);

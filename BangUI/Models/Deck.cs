@@ -12,26 +12,9 @@ namespace BangGame
 
         public List<Card> CardsInPile = new List<Card>();
 
-        public Deck(string pathToData)
+        public Deck(List<Card> cardsInDeck)
         {
-            if (!File.Exists(pathToData))
-            {
-                throw(new Exception("path_does_not_exist"));
-            }
-            using (StreamReader file = new StreamReader(pathToData))
-            {
-                string line;
-                while ((line = file.ReadLine()) != null)
-                {
-                    var t = line.Split(';');
-                    if (t.Length != 5) { continue; }
-                    CardsInDeck.Add( new Card(    t[1], 
-                                            t[2], 
-                                            (CardColor)Enum.Parse(typeof(CardColor), t[3], true),
-                                            "",
-                                            (PlayCard)Enum.Parse(typeof(PlayCard), t[4], true)));
-                }
-            }
+            CardsInDeck = cardsInDeck;
         }
         //this code has been donated from StackOverflow
         public void Shuffle()

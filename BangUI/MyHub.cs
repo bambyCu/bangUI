@@ -18,9 +18,9 @@ namespace SignalRTutorial
         private readonly static HashSet<string> BussyUsers =
             new HashSet<string>();
 
-        //GroupID -> amount of accepted 
+        //GroupID -> (userName, InvitationAccepted)
         private static SortedDictionary<string, List<(string, bool)>> GroupApprove =
-            new SortedDictionary<string, List<(string,bool)>>();
+            new SortedDictionary<string, List<(string, bool)>>();
 
 
         public bool LogIn(string userName)
