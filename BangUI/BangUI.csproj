@@ -154,9 +154,7 @@
     <Compile Include="Models\CardInfo.cs" />
     <Compile Include="Models\Deck.cs" />
     <Compile Include="Models\Game.cs" />
-    <Compile Include="Models\IComunicationCanal.cs" />
     <Compile Include="Models\Player.cs" />
-    <Compile Include="Models\TestCanal.cs" />
     <Compile Include="MyHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Content\bootstrap-grid.css" />
@@ -171,14 +169,14 @@
     <Content Include="Content\Images\heroes\calamityjanet.png" />
     <Content Include="Content\Images\heroes\elgringo.png" />
     <Content Include="Content\Images\heroes\jessejones.png" />
-    <Content Include="Content\Images\heroes\jourdonnais.png" />
+    <Content Include="Content\Images\heroes\joudonnais.png" />
     <Content Include="Content\Images\heroes\kitcarlson.png" />
     <Content Include="Content\Images\heroes\luckyduke.png" />
     <Content Include="Content\Images\heroes\paulregret.png" />
     <Content Include="Content\Images\heroes\pedroramirez.png" />
     <Content Include="Content\Images\heroes\rosedoolan.png" />
     <Content Include="Content\Images\heroes\sidketchum.png" />
-    <Content Include="Content\Images\heroes\slab.png" />
+    <Content Include="Content\Images\heroes\slabthekiller.png" />
     <Content Include="Content\Images\heroes\suzylafayette.png" />
     <Content Include="Content\Images\heroes\vulturesam.png" />
     <Content Include="Content\Images\heroes\willythekid.png" />

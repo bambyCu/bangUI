@@ -59,7 +59,7 @@ namespace BangGame
         //all functions that return Card return object that is to be placed into used pile
         private Card RemoveBlueCard(Card c)
         {
-            if (CardInfo.isCardYellow(c) || c == null) { return null; }
+            if (CardInfo.IsCardYellow(c) || c == null) { return null; }
             Card Temp;
             if ((Temp = CardsOnTable.Find(f => f.Type == c.Type)) == null) { return null; }
             if (Temp.Type == PlayCard.Mirino)
@@ -74,7 +74,7 @@ namespace BangGame
                 CardsOnTable.Remove(Temp);
                 return Temp;
             }
-            if (CardInfo.isCardGun(Temp))
+            if (CardInfo.IsCardGun(Temp))
             {
                 SeeingAttackDistance -= CardInfo.GunDistance(Temp.Type);
                 return Temp;
@@ -86,12 +86,12 @@ namespace BangGame
         //can apply ane blue card 
         private Card ApplyBlueCard(Card c)
         {
-            if (CardInfo.isCardYellow(c) || c == null) { return null; }
-            if (CardsOnTable.Find(f => CardInfo.isCardGun(f)) != null){//if same card is at play, just throw new card into pile
+            if (CardInfo.IsCardYellow(c) || c == null) { return null; }
+            if (CardsOnTable.Find(f => CardInfo.IsCardGun(f)) != null){//if same card is at play, just throw new card into pile
                 return c;
             }
             Card Temp;
-            if (CardInfo.isCardGun(c) && (Temp = CardsOnTable.Find(f => CardInfo.isCardGun(f))) != null)
+            if (CardInfo.IsCardGun(c) && (Temp = CardsOnTable.Find(f => CardInfo.IsCardGun(f))) != null)
             {
                 SeeingAttackDistance -= CardInfo.GunDistance(Temp.Type);
                 CardsOnTable.Remove(Temp);
@@ -99,7 +99,7 @@ namespace BangGame
                 CardsOnTable.Add(c);
                 return Temp;
             }
-            if (CardInfo.isCardGun(c) && CardsOnTable.Find(f => CardInfo.isCardGun(f)) == null) { SeeingAttackDistance += CardInfo.GunDistance(c.Type);}
+            if (CardInfo.IsCardGun(c) && CardsOnTable.Find(f => CardInfo.IsCardGun(f)) == null) { SeeingAttackDistance += CardInfo.GunDistance(c.Type);}
             if(c.Type == PlayCard.Mirino) { SeeingDistance++; } 
             if(c.Type == PlayCard.Mustang) { DistanceFromOthers++; }
             CardsOnTable.Add(c);

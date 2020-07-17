@@ -9,29 +9,21 @@ namespace BangGame
 {
     public class Game
     {
-        private Deck PlayDeck =
-            new Deck(@"C:\Users\sedif\source\repos\BangGame\BangGame\Resources\PlayingCards.txt");
-        private List<Player> Players;
-        private List<string> Names;
-        
-        Game(List<string> names, IComunicationCanal c)
+        public Deck PlayDeck;
+        public List<Player> Players;
+        public List<string> Names;
+
+        public Game(List<string> names)
         {
             if (!CardInfo.GameRoles.ContainsKey(names.Count))
             {
                 //TO DO if game has wrong amount of players
             }
-
-            
-            //System.Console.WriteLine(k[0].Hero);
-
-
-            
-            var k = JsonConvert.DeserializeObject<Card[]>(d);
-            System.Console.WriteLine(k[k.Count() - 1].Name);
             var random = new Random();
-            var gameRoles = new List<Role>(GameRoles[names.Count]);
-            var heroRoles = Enum.GetValues(typeof(Hero)).Cast<Hero>().ToList();
-            foreach(var i in names)
+            var gameRoles = new List<Role>(CardInfo.GameRoles[names.Count]);
+            var heroRoles = new List<Player>(CardInfo.HeroVals);
+            Players = new List<Player>();
+            foreach (var i in names)
             {
                 int randVal = random.Next(gameRoles.Count);
                 var role = gameRoles[randVal];
@@ -39,15 +31,7 @@ namespace BangGame
                 randVal = random.Next(heroRoles.Count);
                 var hero = heroRoles[randVal];
                 heroRoles.RemoveAt(randVal);
-                Players.Add(new Player(i, gameRoles[random.Next(gameRoles.Count)]));
-            }
-        }
-
-        public void Setup()
-        {
-            foreach( string s in Names)
-            {
-                players.Add(new Player(s));
+                Players.Add(new Player(i, hero.HeroType, role, hero.DistanceFromOthers, hero.SeeingDistance, hero.SeeingAttackDistance, hero.MaxHealth));
             }
         }
 
@@ -55,6 +39,5 @@ namespace BangGame
         {
             p.ApplySelfCard(c);
         }
-
     }
 }

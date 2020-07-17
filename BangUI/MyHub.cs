@@ -5,6 +5,9 @@ using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using System.Threading.Tasks;
+using BangGame;
+using System.Drawing;
+using System.IO;
 
 namespace SignalRTutorial
 {
@@ -12,15 +15,20 @@ namespace SignalRTutorial
     public class MyHub : Hub
     {
         //Username -> ConnectionId
-        private readonly static SortedDictionary<string, string> Connections =
-            new SortedDictionary<string, string>();
+        private readonly static Dictionary<string, string> Connections =
+            new Dictionary<string, string>();
 
         private readonly static HashSet<string> BussyUsers =
             new HashSet<string>();
 
+        private readonly static SortedDictionary<string, Game> CurrGames =
+            new SortedDictionary<string, Game>();
+
         //GroupID -> (userName, InvitationAccepted)
         private static SortedDictionary<string, List<(string, bool)>> GroupApprove =
             new SortedDictionary<string, List<(string, bool)>>();
+
+        
 
 
         public bool LogIn(string userName)
@@ -30,7 +38,9 @@ namespace SignalRTutorial
                 if (Connections.Keys.Contains(userName)) { return false; }
                 Connections.Add(userName, Context.ConnectionId);
             }
+
             Clients.All.LogIn(userName);
+            
             return true;
         }
 
@@ -77,8 +87,8 @@ namespace SignalRTutorial
                     //TO DO make better namer of groups, that goes above 1000
                     keyVal = random.Next(1000).ToString();
                 }
+                GroupApprove.Add(keyVal, users.Select(x => (x, false)).ToList());
             }
-            GroupApprove.Add(keyVal, users.Select(x => (x, false)).ToList());
             lock (Connections)
             {
                 foreach ( string s in users)
@@ -90,7 +100,6 @@ namespace SignalRTutorial
         }
 
 
-
         public void GetInVal(string GroupName, bool Decision) 
         {
             var name = Connections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
@@ -100,17 +109,40 @@ namespace SignalRTutorial
             }
             if (Decision)
             {
-                (string, bool) tuple;
                 lock (GroupApprove)
                 {
-                    tuple = GroupApprove[GroupName].Find(x => x.Item1 == name);
+                    var index = GroupApprove[GroupName].FindIndex(x => x.Item1 == name);
+                    GroupApprove[GroupName][index] = (GroupApprove[GroupName][index].Item1, true);
                     if (GroupApprove[GroupName].All(x => x.Item2))
                     {
-                        //TO DO finish BangGame
+                        var names = GroupApprove[GroupName].Select(x => x.Item1);
+                        GroupApprove.Remove(GroupName);
+                        string keyVal = "66";
+                        var random = new Random();
+                        lock (CurrGames)
+                        {
+                            while (CurrGames.Keys.Contains(keyVal))
+                            {
+                                //TO DO make better namer of groups, that goes above 1000
+                                keyVal = random.Next(1000).ToString();
+                            }
+                            CurrGames.Add(keyVal, new Game(names.ToList()));
+                        }
+                        ImageConverter converter = new ImageConverter();
+                        List<Player> p;
+                        lock (CurrGames)
+                        {
+                            p = CurrGames[keyVal].Players;
+                        }
+                        foreach (var i in p)
+                        {
+                            var image = Image.FromFile(Path.Combine(AppContext.BaseDirectory, "") + @"Content\Images\heroes\" + i.HeroType.ToString().ToLower() + ".png");
+                            Clients.All.LogIn();
+                            Clients.Client(Connections[i.Name]).DisplayImage((byte[])converter.ConvertTo(image, typeof(byte[])));
+                        }
                     }
+                    
                 }
-                tuple = (tuple.Item1, true);
-
             }
             else
             {

@@ -18,7 +18,7 @@ namespace BangGame
 
         static CardInfo()
         {
-            using (StreamReader sr = new StreamReader(@"C:\Users\sedif\source\repos\BangUI\BangUI\Models\Decks\HeroCards.txt"))
+            using (StreamReader sr = new StreamReader(Path.Combine(AppContext.BaseDirectory, "") + @"Models\Decks\HeroCards.txt")) 
             {
                 string line = sr.ReadToEnd();
 
@@ -27,7 +27,8 @@ namespace BangGame
                         .Select(x => new Player(x.Hero, Int32.Parse(x.DistanceFromOthers), Int32.Parse(x.SeeingDistance), Int32.Parse(x.SeeingAttackDistance), Int32.Parse(x.MaxHealth)))
                         .ToList();
             }
-            using (StreamReader sr = new StreamReader(@"C:\Users\sedif\source\repos\BangUI\BangUI\Models\Decks\PlayingCards.txt"))
+
+            using (StreamReader sr = new StreamReader(Path.Combine(AppContext.BaseDirectory, "") + @"Models\Decks\PlayingCards.txt"))
             {
                 string line = sr.ReadToEnd();
 
@@ -35,7 +36,7 @@ namespace BangGame
             }
         }
         //CARDS FOR CHANGING ATTACK DISTANCE AND BLUE CARDS 
-        private static List<PlayCard> Guns = new List<PlayCard>
+        private readonly static List<PlayCard> Guns = new List<PlayCard>
         {
             PlayCard.Remington,
             PlayCard.Carabine,
@@ -45,7 +46,7 @@ namespace BangGame
         };
 
         //REST OF BLUE CARDS 
-        private static List<PlayCard> SpecialBlueCards = new List<PlayCard>
+        private readonly static List<PlayCard> SpecialBlueCards = new List<PlayCard>
         {
             PlayCard.Barel,
             PlayCard.Dynamite,
@@ -54,7 +55,7 @@ namespace BangGame
             PlayCard.Prison
         };
 
-        private static Dictionary<PlayCard, int> GunDistanceMap = new Dictionary<PlayCard, int>
+        private readonly static Dictionary<PlayCard, int> GunDistanceMap = new Dictionary<PlayCard, int>
         {
             {PlayCard.Remington,2},
             {PlayCard.Carabine,3},
@@ -63,21 +64,21 @@ namespace BangGame
             {PlayCard.Winchester,4}
         };
 
-        private static List<PlayCard> SelfApplyCards = Guns.
+        private readonly static List<PlayCard> SelfApplyCards = Guns.
                                                         Concat(SpecialBlueCards).
                                                         Append(PlayCard.Beer).
                                                         ToList();
 
 
-        private static List<PlayCard> SpecialCases = new List<PlayCard> {
+        private readonly static List<PlayCard> SpecialCases = new List<PlayCard> {
             PlayCard.Missed,
             PlayCard.Prison};
 
-        private static List<PlayCard> OnlyCardToCard = new List<PlayCard> {
+        private readonly static List<PlayCard> OnlyCardToCard = new List<PlayCard> {
             PlayCard.CatBalou,
             PlayCard.Panic};
 
-        private static List<PlayCard> CardWithReactionFromOthers = new List<PlayCard> {
+        private readonly static List<PlayCard> CardWithReactionFromOthers = new List<PlayCard> {
             PlayCard.Bang,
             PlayCard.Gatling,
             PlayCard.Duel,
@@ -103,12 +104,12 @@ namespace BangGame
             return SelfApplyCards.Any(d => d == c.Type);
         }
 
-        public static bool isCardYellow(Card c)
+        public static bool IsCardYellow(Card c)
         {
             return !IsCardBlue(c);
         }
 
-        public static bool isCardGun(Card c)
+        public static bool IsCardGun(Card c)
         {
             return Guns.Contains(c.Type);
         }
