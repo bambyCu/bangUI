@@ -15,6 +15,8 @@ namespace BangGame
 
         public Game(List<string> names)
         {
+            Names = names;
+            PlayDeck = new Deck(CardInfo.AvailableCards);
             if (!CardInfo.GameRoles.ContainsKey(names.Count))
             {
                 //TO DO if game has wrong amount of players
@@ -31,7 +33,12 @@ namespace BangGame
                 randVal = random.Next(heroRoles.Count);
                 var hero = heroRoles[randVal];
                 heroRoles.RemoveAt(randVal);
-                Players.Add(new Player(i, hero.HeroType, role, hero.DistanceFromOthers, hero.SeeingDistance, hero.SeeingAttackDistance, hero.MaxHealth));
+                var nPlayer = new Player(i, hero.HeroType, role, hero.DistanceFromOthers, hero.SeeingDistance, hero.SeeingAttackDistance, hero.MaxHealth);
+                Players.Add(nPlayer);
+                for(int j = 0; j < nPlayer.MaxHealth;j++)
+                {
+                    nPlayer.Hand.Add(PlayDeck.Draw());
+                }
             }
         }
 

@@ -87,13 +87,17 @@ namespace BangGame
 
         public static Dictionary<int, List<Role>> GameRoles = new Dictionary<int, List<Role>>()
         {
+            { 1, new List<Role>() { Role.Sherif} },
+            { 2, new List<Role>() { Role.Sherif, Role.Outlaw} },
+            { 3, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw} },
             { 4, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw} },
             { 5, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw, Role.Deputy} },
             { 6, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw, Role.Outlaw, Role.Deputy} },
             { 7, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw, Role.Outlaw, Role.Deputy, Role.Deputy } }
         };
 
-         
+
+
         public static bool IsCardBlue(Card c)
         {
             return Guns.Contains(c.Type) || SpecialBlueCards.Contains(c.Type);

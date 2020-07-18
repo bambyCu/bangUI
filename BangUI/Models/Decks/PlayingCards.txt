@@ -7,14 +7,14 @@
     "Type": "Dynamite"
   },
   {
-    "Name": "Barle",
+    "Name": "Barile",
     "Num": "Q",
     "Color": "spade",
     "Picture": "",
     "Type": "Barel"
   },
   {
-    "Name": "Barle",
+    "Name": "Barile",
     "Num": "K",
     "Color": "spade",
     "Picture": "",

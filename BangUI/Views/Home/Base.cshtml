@@ -5,14 +5,36 @@
 
     <div class=" fixed-top w-100 align-top" style="height: 100vh;">
         <div class="row h-100 w-100 align-items-center">
-            <div class="w-100 h-100 text-white col bg-info">
-                <div id="nameHold" class="d-flex justify-content-center">name:</div>
+            <div class="w-100 h-100 col bg-info">
+                <div id="nameHold" class="d-flex justify-content-center text-white text-white">name:</div>
                 <div class="w-100 d-flex justify-content-center">
-                    <img id="heroPhoto" class="w-100 mx-auto" src="~/Content/Images/heroes/bartcassidy.png" alt="Max-width 100%">
+                    <img id="heroPhoto" class="w-100 mx-auto" src="~/Content/Images/Heroes/bartcassidy.png" alt="Max-width 100%">
                 </div>
-                <div href="heroLives">lives:</div>
+                <div class="list-group">
+                    <div id="characterHealth" class="list-group-item d-flex justify-content-center">HEALTH:</div>
+                    <div id="characterRole" class="list-group-item d-flex justify-content-center">ROLE:</div>
+                </div>
             </div>
-            <div class="container h-100 text-white col-6 bg-primary">
+            <div class="container h-100 col-7 bg-primary">
+                <div id="enemies" class="row h-25 bg-light border" >
+                    
+                </div>
+                <div class="h-50 mh-100 bg-dark border">
+                    <div class="w-100 h-50 row">
+                        <img id="enemyPhoto" class=" mw-100 mh-100 col-4">
+                        <div class="col ">
+                            <ul id="enemyVals" class="text-white" style="list-style-type:none;">
+                                <li id="enemyNameL"></li>
+                                <li id="enemyHeroNameL"></li>
+                                <li id="enemyHealthL"></li>
+                                <li id="enemyCardsInHandL"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="enemyBlueCards" class=" h-50 bg-light"></div>
+                </div>
+                <div id="playCards" class="h-25 mh-100 bg-light border row" >
+                </div>
             </div>
             <div class="container h-100 text-white col bg-info">
                 <div id="loggedList" class="list-group">

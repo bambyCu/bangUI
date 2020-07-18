@@ -15,6 +15,7 @@ namespace BangGame
         public Deck(List<Card> cardsInDeck)
         {
             CardsInDeck = cardsInDeck;
+            Shuffle();
         }
         //this code has been donated from StackOverflow
         public void Shuffle()

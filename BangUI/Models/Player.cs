@@ -50,9 +50,7 @@ namespace BangGame
             DistanceFromOthers = distanceFromOthers;
             SeeingDistance = seeingDistance;
             SeeingAttackDistance = seeingAttackDistance;
-            if (RoleType == Role.Sherif) { maxHealt++; }
             MaxHealth = maxHealt;
-            Health = maxHealt;
         }
 
 

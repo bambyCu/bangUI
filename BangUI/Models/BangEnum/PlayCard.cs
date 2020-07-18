@@ -4,28 +4,28 @@ using System.Text;
 
 namespace BangGame
 {
-    public enum PlayCard{ 
-        Remington,
-        Carabine,
-        Schofield,
-        Mirino,
-        Winchester,
+    public enum PlayCard {
         Bang,
-        Barel, 
-        Prison, 
-        Dynamite, 
-        Mustang, 
-        Volcanic, 
-        Beer, 
-        CatBalou, 
+        Barel,
+        Beer,
+        Carabine,
+        CatBalou,
+        Diligenza,
         Duel,
-        BangAll, 
-        Gatling, 
-        Emporio, 
-        Indians, 
+        Dynamite,
+        Emporio,
+        Gatling,
+        Indians,
+        Mirino,
         Missed,
-        Panic, 
-        Saloon, 
-        Diligenza, 
-        WellsFargo}
+        Mustang,
+        Panic,
+        Prison,
+        Remington,
+        Saloon,
+        Schofield,
+        Volcanic,
+        WellsFargo,
+        Winchester
+    }
 }

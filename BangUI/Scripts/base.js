@@ -3,6 +3,8 @@
     let SALT = "name:";
     let myHub = $.connection.mainHub;
     let ACTIVEBUTTONCLASS = "active"
+    let GAMEID = "";
+    let DRAGED = "";
 
     let thyName = function (str) {
         let person = prompt(str, "");
@@ -69,6 +71,30 @@
         });
     }
 
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        console.log("I drag now " + ev.target.id);
+
+        DRAGED = ev.target.id;
+        //ev.dataTransfer.setData("text", );
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+
+        console.log("I drop now " + DRAGED + " " + ev.target.id + " " + ev.currentTarget.id);
+
+        document.getElementById(DRAGED).remove();
+        //ev.target.appendChild(document.getElementById(data));
+    }
+
+    let setImage = function (byteArrayAsBase64, elementId) {
+        document.getElementById(elementId).src = "data:image/png;base64," + byteArrayAsBase64;
+    }
+
     myHub.client.logIn = function (user) {
         addToLogged(user);
     }
@@ -88,8 +114,73 @@
         $("#exampleModal").modal('hide');
     }
 
-    myHub.client.displayImage = function(byteArrayAsBase64 ){
-        document.getElementById("heroPhoto").src = "data:image/png;base64," + byteArrayAsBase64;;
+    myHub.client.displayImage = function (cardByteArray64) {
+
+        document.getElementById("heroPhoto").src = "data:image/png;base64," + cardByteArray64;
+    }
+
+    myHub.client.setHealth = function (health) {
+        document.getElementById("characterHealth").innerHTML = "HEALTH:" + health;
+    }
+
+    myHub.client.setRole = function (role) {
+        document.getElementById("characterRole").innerHTML = "ROLE:" + role;
+    }
+
+
+    myHub.client.addHandCard = function (cardByteArray64, cardId) {
+        $('#playCards').append('<img id=\"' + cardId
+            + '\"  class=\" col-2 mh-100 rounded mx-auto d-block\"'
+            + 'draggable=\"true\"></img>');
+        setImage(cardByteArray64, cardId);
+        document.getElementById(cardId).ondragstart = function (event) {
+            drag(event);
+        };
+    }
+
+    myHub.client.addEnemy = function (name, health, role) {
+        let nameId = "enemyDiv"+ name;
+        $('#enemies').append(
+            "<div class=\"list-group h-100 col-2 \">"
+            + "<div class=\"list-group-item d-flex justify-content-center overflow-hidden\">NAME:" + name
+            + "</div> <div class=\"list-group-item d-flex justify-content-center overflow-hidden\">HEALTH:" + health
+            + "</div > <div class=\"list-group-item d-flex justify-content-center overflow-hidden\">ROLE:" + role + "</div>"
+            + '<div id="' + nameId + '"class=" border border-dark w-100 h-100" style="z-index: 3;top:0;left:0;position: absolute;">'
+            + "</div >");
+        document.getElementById(nameId).ondragover = function (event) {
+            allowDrop(event);
+        };
+        document.getElementById(nameId).ondrop = function (event) {
+            drop(event);
+        };
+
+        document.getElementById(nameId).addEventListener("mouseover", function () {
+            myHub.server.getInfoUser(GAMEID, name)
+                .done(function () { console.log("dfsdf"); })
+                .fail(function () { alert("sorry but connection is not great")});
+        });
+    }
+
+    myHub.client.setGameId = function (str) {
+        GAMEID = str
+    }
+    let elem = document.getElementById($(this).attr('id'));
+
+    myHub.client.message = function (str) {
+        alert(str);
+    }
+
+    myHub.client.setGameView = function (cardByteArray64, name, heroName, health, blueCards, handAmount,){
+        setImage(cardByteArray64, "enemyPhoto");
+        document.getElementById("enemyNameL").innerHTML = "NAME: " + name;
+        document.getElementById("enemyHeroNameL").innerHTML = "HERO_NAME: " + heroName;
+        document.getElementById("enemyHealthL").innerHTML = "HEALTH: " + health;
+        document.getElementById("enemyCardsInHandL").innerHTML = "CARDS_IN_HAND: " + handAmount;
+        $('#enemyBlueCards').empty();
+        for (let i = 0; i < blueCards.length; i++) {
+            $('#enemyBlueCards').append('<img id=\"blueCard' + i + '\"  class=\" col-2 mh-100 rounded\"></img>');
+            setImage(blueCards[i], 'blueCard' + i);
+        }
     }
 
     $.connection.hub.start()
@@ -101,9 +192,10 @@
                     }
                 })
                 .fail(function (e) { alert("there seems to be a problem" + e) });
-            document.getElementById("heroPhoto").src = "~/Content/Images/heroes/blackjack.png";
+            //document.getElementById("heroPhoto").src = "~/Content/Images/heroes/blackjack.png";
             thyName("give me thy name(alphanumeric shorter than 11 chars)")
             
+
         })
         .fail(function () { alert("this doesn't seem to work, bitch"); });
 
