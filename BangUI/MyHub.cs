@@ -119,26 +119,31 @@ namespace SignalRTutorial
 
         public bool ApplyGameIdCardTo(string gameId, string cardId, string target)
         {
+            string mess;
             lock (CurrGames)
             {
                 if (CurrGames[gameId].GetCurrentTurnPlayer().Name != Name())
                 {
                     lock (Connections)
                     {
-                        Clients.Client(Connections[Name()]).Message("it is not your turn");
+                        //Clients.Client(Connections[Name()]).Message("it is not your turn");
+                        //handled on client
                     }
                     return false;
                 }
                 if (!CurrGames.ContainsKey(gameId)) { return false; }
                 if (!CurrGames[gameId].Names.Contains(target)) { return false; }
                 CurrGames[gameId].applyCard(Name(), cardId, target);
-                
-                var mess = CurrGames[gameId].LastMessage;
-                if (mess != "")
+                mess = CurrGames[gameId].LastMessage;
+            }
+            
+            if (mess != "")
+            {
+                lock (Connections)
                 {
-                    lock (Connections)
+                    foreach (Player i in CurrGames[gameId].Players)
                     {
-                        Clients.Client(Connections[target]).addToMessageList(mess);
+                        Clients.Client(Connections[i.Name]).addToMessageList(mess);
                     }
                 }
             }
@@ -177,7 +182,23 @@ namespace SignalRTutorial
                     Clients.Client(Connections[Name()]).Message("too many cards in hand");
                     return;
                 }
+                var playersAlive = game.Players.Count;
                 game.NextTurn();
+                if (game.Players.Count != playersAlive)//if dynamite has been activated and someone died 
+                {
+                    var outcome = game.IsGameFinshed();
+                    foreach (var i in game.Names)
+                    {
+                        Clients.Client(Connections[i]).addToMessageList(player.Name + " has just been kiled by dynamite");
+                        if (outcome != null)
+                        {
+                            Clients.Client(Connections[i]).addToMessageList(outcome + " team has just won");
+                        }
+                    }
+
+                    UpdateGame(GameID());
+                    return;
+                }
                 SendHandCards(game.GetCurrentTurnPlayer());
                 foreach (var i in game.Names)
                 {

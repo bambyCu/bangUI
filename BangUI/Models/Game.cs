@@ -51,7 +51,6 @@ namespace BangGame
             GetCurrentTurnPlayer().Hand.Add(PlayDeck.Draw());
         }
 
-
         private Card DrawForEffect()
         {
             var card = PlayDeck.Draw();
@@ -103,9 +102,59 @@ namespace BangGame
             }
         }
 
+        public Role? IsGameFinshed()
+        {
+            if (Players.All(x => x.RoleType == Role.Outlaw)) 
+            {
+                return Role.Outlaw;
+            }
+            if (Players.All(x => x.RoleType == Role.Sherif || x.RoleType == Role.Deputy))
+            {
+                return Role.Sherif;
+            }
+
+            if (Players.All(x => x.RoleType == Role.Renegate))
+            {
+                return Role.Renegate;
+            }
+            return null;
+        }
+
         public Player NextTurn()
         {
-            CurrTurn = (CurrTurn+1) % Players.Count;
+            CurrTurn = (CurrTurn + 1) % Players.Count;
+            Card temp;
+            if ((temp = GetCurrentTurnPlayer().CardsOnTable.Find(x => x.Type == PlayCard.Dynamite)) != null)
+            {
+                var cardVal = DrawForEffect();
+                var num = Int32.Parse(cardVal.Num);
+                if (cardVal.Color == CardColor.spade && (num <= 9 && num >= 2))
+                {
+                    GetCurrentTurnPlayer().Health -= 3;
+                    evaluateDead();
+                    PlayDeck.CardToPile(temp);
+                    return NextTurn();
+                }
+                else
+                {
+                    Players[(CurrTurn + 1) % Players.Count].CardsOnTable.Add(temp);
+                    GetCurrentTurnPlayer().CardsOnTable.Remove(temp);
+                }
+            }
+            if ((temp = GetCurrentTurnPlayer().CardsOnTable.Find(x => x.Type == PlayCard.Prison)) != null)
+            {
+                var cardVal = DrawForEffect();
+                GetCurrentTurnPlayer().CardsOnTable.Remove(temp);
+                PlayDeck.CardToPile(temp);
+                if (cardVal.Color == CardColor.heart)
+                {
+                    GetCurrentTurnPlayer().CardsOnTable.Remove(temp);
+                    PlayDeck.CardToPile(temp);
+                    return NextTurn();
+                }
+                
+            }
+            canPlayBang = true;
             Players[CurrTurn].Hand.Add(PlayDeck.Draw());
             Players[CurrTurn].Hand.Add(PlayDeck.Draw());
             return Players[CurrTurn];
@@ -148,7 +197,7 @@ namespace BangGame
                 apInstance.Hand.Add(PlayDeck.Draw());
                 apInstance.Hand.Add(PlayDeck.Draw());
             }
-            else if ( PlayCard.Diligenza == cardInstance.Type)
+            else if (PlayCard.Diligenza == cardInstance.Type)
             {
                 LastMessage = applicator + " applied " + cardInstance.Type;
                 apInstance.Hand.Add(PlayDeck.Draw());
@@ -158,7 +207,12 @@ namespace BangGame
             {
                 if (cardInstance.Type == PlayCard.Bang)
                 {
-                    if (vicInstance.CardsOnTable.Any(x => x.Type == PlayCard.Barel) && 
+                    if (!canPlayBang)
+                    {
+                        LastMessage = applicator + " cant play bang";
+                        return;
+                    }
+                    if (vicInstance.CardsOnTable.Any(x => x.Type == PlayCard.Barel) &&
                         DrawForEffect().Color == CardColor.heart)
                     {
                         apInstance.Hand.Remove(cardInstance);
@@ -166,33 +220,35 @@ namespace BangGame
                         LastMessage = applicator + " applied " + cardInstance.Type + " to " + victim + "but Barel took it";
                         return;
                     }
-                    if(Distance(vicInstance, apInstance) + vicInstance.DistanceFromOthers  - apInstance.SeeingAttackDistance - apInstance.SeeingDistance > 0)
+                    if (Distance(vicInstance, apInstance) + vicInstance.DistanceFromOthers - apInstance.SeeingAttackDistance - apInstance.SeeingDistance > 0)
                     {
-                        LastMessage =  victim + "is too far from " + applicator + " for " + cardInstance.Type;
+                        LastMessage = applicator + "is too far from " + victim + " for " + cardInstance.Type;
                         return;
                     }
-                    canPlayBang = false;
+                    canPlayBang = false || apInstance.CardsOnTable.Any(x => x.Type == PlayCard.Volcanic);
                     LastMessage = applicator + " applied " + cardInstance.Type + " to " + victim;
                     var discartedMiss = vicInstance.TakeBangDamage();
                     PlayDeck.CardToPile(discartedMiss);
                 }
                 if (cardInstance.Type == PlayCard.Gatling)
                 {
-                    LastMessage = applicator + " applied " + cardInstance.Type + " to " + victim;
+                    LastMessage = applicator + " applied " + cardInstance.Type ;
                     foreach (var i in Players)
                     {
+                        if (i == GetCurrentTurnPlayer())
+                        {
+                            continue;
+                        }
                         var discartedMiss = i.TakeBangDamage();
                         PlayDeck.CardToPile(discartedMiss);
                     }
                 }
                 if (cardInstance.Type == PlayCard.Duel)
                 {
-                    
                     Card temp;
                     while (true)
                     {
                         temp = vicInstance.TakeIndiandDamage();
-                        vicInstance.Hand.Remove(temp);
                         PlayDeck.CardToPile(temp);
                         if (temp == null)
                         {
@@ -201,7 +257,6 @@ namespace BangGame
                             break;
                         }
                         temp = apInstance.TakeIndiandDamage();
-                        apInstance.Hand.Remove(temp);
                         PlayDeck.CardToPile(temp);
                         if (temp == null)
                         {
@@ -215,9 +270,12 @@ namespace BangGame
                 {
                     foreach (var i in Players)
                     {
-
+                        if (i == GetCurrentTurnPlayer()) 
+                        {
+                            continue;
+                        }
                         LastMessage = applicator + " applied " + cardInstance.Type;
-                        var discartedMiss = i.TakeBangDamage();
+                        var discartedMiss = i.TakeIndiandDamage();
                         PlayDeck.CardToPile(discartedMiss);
                     }
                 }

@@ -142,7 +142,7 @@ namespace BangGame
 
         public Card TakeIndiandDamage()
         {
-            var temp = Hand.Find(x => x.Type == PlayCard.Missed);
+            var temp = Hand.Find(x => x.Type == PlayCard.Bang);
             if (temp == null)
             {
                 Health--;

@@ -73,7 +73,8 @@
     }
 
     let addToMessageList = function (message) {
-        document.getElementById("messageList").innerHTML += ("<br>" + message);
+        messageDiv = document.getElementById("messageList");
+        messageDiv.innerHTML += ("<br>" + message);
     }
 
     function allowDrop(ev) {
@@ -254,7 +255,7 @@
                 event.preventDefault();
                 myHub.server.discard(DRAGED)
                     .done(function () {
-                        //document.getElementById(DRAGED).remove();
+                        document.getElementById(DRAGED).remove();
                     })
                     .fail(function () { });
             };

@@ -49,10 +49,8 @@ namespace BangGame
         private readonly static List<PlayCard> SpecialBlueCards = new List<PlayCard>
         {
             PlayCard.Barel,
-            PlayCard.Dynamite,
             PlayCard.Mirino,
             PlayCard.Mustang,
-            PlayCard.Prison
         };
 
         public readonly static Dictionary<PlayCard, int> GunDistanceMap = new Dictionary<PlayCard, int>
