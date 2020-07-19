@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using BangGame;
 using System.Drawing;
 using System.IO;
+using Microsoft.Ajax.Utilities;
 
 namespace SignalRTutorial
 {
@@ -29,6 +30,14 @@ namespace SignalRTutorial
             new SortedDictionary<string, List<(string, bool)>>();
 
 
+        private string Name()
+        {
+            lock (Connections)
+            {
+                return Connections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+            }
+        }
+
 
         private byte[] ImageTo64(string src)
         {
@@ -37,9 +46,53 @@ namespace SignalRTutorial
             return (byte[])converter.ConvertTo(image, typeof(byte[]));
         }
 
-        private string Name()
+        private string GameID()
         {
-            return Connections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+            lock (CurrGames)
+            {
+                return CurrGames.First(x => x.Value.Names.Contains(Name())).Key;
+            }
+        }
+
+        private void SendHandCards(Player p)
+        {
+            var playCards = new List<(byte[], string)>();
+            foreach (var j in p.Hand)
+            {
+                playCards.Add((ImageTo64(Path.Combine(AppContext.BaseDirectory, "") + @"Content\Images\PlayCards\" + j.Type.ToString().ToLower() + ".png"), j.ID()));
+            }
+            lock (Connections)
+            {
+                Clients.Client(Connections[p.Name]).AddHandCards(playCards.ToArray());
+            }
+        }
+
+        private void UpdateGame(string gameId)
+        {
+            
+            lock (CurrGames)
+            {
+                foreach (var i in CurrGames[gameId].Players)
+                {
+                    //Clients.Client(Connections[i.Name]).DisplayImage(ImageTo64(Path.Combine(AppContext.BaseDirectory, "") + @"Content\Images\Heroes\" + i.HeroType.ToString().ToLower() + ".png"));
+                    lock (Connections)
+                    {
+                        Clients.Client(Connections[i.Name]).SetHealth(i.Health);
+                        Clients.Client(Connections[i.Name]).SetRole(i.RoleType.ToString());
+                    }
+                    SendHandCards(i);
+                    var enemyPlayers = new List<(string, int, string)>();
+                    foreach (var j in CurrGames[gameId].Players)
+                    {
+                        enemyPlayers.Add((j.Name, j.Health, (j.RoleType == Role.Sherif) ? "Sherif" : "NotSherif"));
+                    }
+                    lock (Connections)
+                    {
+                        Clients.Client(Connections[i.Name]).AddEnemies(enemyPlayers);
+                        Clients.Client(Connections[i.Name]).SetCurrPlayer(CurrGames[gameId].GetCurrentTurnPlayer().Name);
+                    }
+                }
+            }
         }
 
         public bool LogIn(string userName)
@@ -55,19 +108,89 @@ namespace SignalRTutorial
 
         public override Task OnDisconnected(bool stopCalled)
         {
-            var name = Name();
-            if (name == null) { return base.OnDisconnected(stopCalled); }
+            if (Name() == null) { return base.OnDisconnected(stopCalled); }
+            Clients.All.Disconnect(Name());
             lock (Connections)
             {
-                Connections.Remove(name);
+                Connections.Remove(Name());
             }
-            Clients.All.Disconnect(name);
             return base.OnDisconnected(stopCalled);
         }
 
+        public bool ApplyGameIdCardTo(string gameId, string cardId, string target)
+        {
+            lock (CurrGames)
+            {
+                if (CurrGames[gameId].GetCurrentTurnPlayer().Name != Name())
+                {
+                    lock (Connections)
+                    {
+                        Clients.Client(Connections[Name()]).Message("it is not your turn");
+                    }
+                    return false;
+                }
+                if (!CurrGames.ContainsKey(gameId)) { return false; }
+                if (!CurrGames[gameId].Names.Contains(target)) { return false; }
+                CurrGames[gameId].applyCard(Name(), cardId, target);
+                
+                var mess = CurrGames[gameId].LastMessage;
+                if (mess != "")
+                {
+                    lock (Connections)
+                    {
+                        Clients.Client(Connections[target]).addToMessageList(mess);
+                    }
+                }
+            }
+            UpdateGame(gameId);
+            
+            return true;
+        }
+
+        
+        public void Discard(string cardId)
+        {
+            lock (CurrGames)
+            {
+                var game = CurrGames[GameID()];
+                game.DiscardCard(Name(), cardId);
+            }
+        }
+        public void EndTurn()
+        {
+            
+            lock (CurrGames[GameID()])
+            {
+                var game = CurrGames[GameID()];
+
+                var player = game.GetCurrentTurnPlayer();
+                if (Name() != player.Name)
+                {
+                    lock (Connections)
+                    {
+                        Clients.Client(Connections[Name()]).Message("it is not your turn");
+                    }
+                    return;
+                }
+                if (player.Hand.Count > player.Health)
+                {
+                    Clients.Client(Connections[Name()]).Message("too many cards in hand");
+                    return;
+                }
+                game.NextTurn();
+                SendHandCards(game.GetCurrentTurnPlayer());
+                foreach (var i in game.Names)
+                {
+                    Clients.Client(Connections[i]).SetCurrPlayer(game.GetCurrentTurnPlayer().Name);
+                }
+            }
+        }
         public string[] GetUsers()
         {
-            return Connections.Keys.ToArray();
+            lock (Connections)
+            {
+                return Connections.Keys.ToArray();
+            }
         }
 
         public bool GameInvitation(String[] users)
@@ -110,7 +233,6 @@ namespace SignalRTutorial
 
         public void GetInVal(string GroupName, bool Decision) 
         {
-            var name = Name();
             if (!GroupApprove.ContainsKey(GroupName))
             {
                 return;
@@ -119,7 +241,7 @@ namespace SignalRTutorial
             {
                 lock (GroupApprove)
                 {
-                    var index = GroupApprove[GroupName].FindIndex(x => x.Item1 == name);
+                    var index = GroupApprove[GroupName].FindIndex(x => x.Item1 == Name());
                     GroupApprove[GroupName][index] = (GroupApprove[GroupName][index].Item1, true);
                     if (GroupApprove[GroupName].All(x => x.Item2))
                     {
@@ -136,40 +258,50 @@ namespace SignalRTutorial
                             }
                             CurrGames.Add(keyVal, new Game(names.ToList()));
                         }
-                        
                         List<Player> p;
                         lock (CurrGames)
                         {
                             p = CurrGames[keyVal].Players;
-                        }
-                        foreach (var i in p)
-                        {
-                            Clients.Client(Connections[i.Name]).SetGameId(keyVal);
-                            Clients.Client(Connections[i.Name]).DisplayImage(ImageTo64(Path.Combine(AppContext.BaseDirectory, "") + @"Content\Images\Heroes\" + i.HeroType.ToString().ToLower() + ".png"));
-                            Clients.Client(Connections[i.Name]).SetHealth(i.Health);
-                            Clients.Client(Connections[i.Name]).SetRole(i.RoleType.ToString());
-                            foreach (var j in i.Hand)
+                        
+                            foreach (var i in p)
                             {
-                                Clients.Client(Connections[i.Name]).AddHandCard(ImageTo64(Path.Combine(AppContext.BaseDirectory, "") + @"Content\Images\PlayCards\" + j.Type.ToString().ToLower() + ".png"), j.Color.ToString() + j.Num.ToString());
-                            }       
-                            foreach ( var j in p)
-                            {
-                                Clients.Client(Connections[i.Name]).AddEnemy(j.Name, j.Health, (j.RoleType == Role.Sherif) ? "Sherif" : "NotSherif");
+                                lock (Connections)
+                                {
+                                    Clients.Client(Connections[i.Name]).SetGameId(keyVal);
+                                    Clients.Client(Connections[i.Name]).DisplayImage(ImageTo64(Path.Combine(AppContext.BaseDirectory, "") + @"Content\Images\Heroes\" + i.HeroType.ToString().ToLower() + ".png"));
+                                    Clients.Client(Connections[i.Name]).SetHealth(i.Health);
+                                    Clients.Client(Connections[i.Name]).SetRole(i.RoleType.ToString());
+                                }
+                                SendHandCards(i);
+                                var enemyPlayers = new List<(string, int, string)>();
+                                foreach ( var j in p)
+                                {
+                                    enemyPlayers.Add((j.Name, j.Health, (j.RoleType == Role.Sherif) ? "Sherif" : "NotSherif"));
+                                }
+                                lock (Connections)
+                                {
+                                    Clients.Client(Connections[i.Name]).AddEnemies(enemyPlayers);
+                                }
+                                var player = i;
+                                var tempImage = ImageTo64(Path.Combine(AppContext.BaseDirectory, "") + @"Content\Images\Heroes\" + player.HeroType.ToString().ToLower() + ".png");
+                                List<(byte[], string)> images = new List<(byte[], string)>();
+                                foreach (var j in player.CardsOnTable)
+                                {
+                                    images.Add((
+                                        ImageTo64(
+                                            Path.Combine(AppContext.BaseDirectory, "")
+                                            + @"Content\Images\PlayCards\"
+                                            + j.Type.ToString().ToLower()
+                                            + ".png")
+                                        , j.ID())
+                                        );
+                                }
+                                lock (Connections)
+                                {
+                                    Clients.Client(Connections[i.Name]).SetGameView(tempImage, Name(), player.HeroType.ToString(), player.Health, images, player.Hand.Count);
+                                    Clients.Client(Connections[i.Name]).SetCurrPlayer(CurrGames[keyVal].GetCurrentTurnPlayer().Name);
+                                }
                             }
-                            var player = i;
-                            var tempImage = ImageTo64(Path.Combine(AppContext.BaseDirectory, "") + @"Content\Images\Heroes\" + player.HeroType.ToString().ToLower() + ".png");
-                            List<byte[]> images = new List<byte[]>();
-                            foreach (var j in player.CardsOnTable)
-                            {
-                                images.Add(
-                                    ImageTo64(
-                                        Path.Combine(AppContext.BaseDirectory, "")
-                                        + @"Content\Images\PlayCards\"
-                                        + j.Type.ToString().ToLower()
-                                        + ".png")
-                                    );
-                            }
-                            Clients.Client(Connections[i.Name]).SetGameView(tempImage, name, player.HeroType.ToString(), player.Health, images, player.Hand.Count);
                         }
                     }
                     
@@ -186,7 +318,7 @@ namespace SignalRTutorial
                 lock (Connections) {
                     foreach (var s in invited)
                     {
-                        Clients.Client(Connections[s]).InvitationRefused(name);
+                        Clients.Client(Connections[s]).InvitationRefused(Name());
                     }
                 }
             }
@@ -194,28 +326,32 @@ namespace SignalRTutorial
 
         public void GetInfoUser(string game, string name)
         {
-            if (!CurrGames.ContainsKey(game))
+            Player player;
+            lock (CurrGames)
             {
-                Clients.Client(Context.ConnectionId).Message("game you are calling doesnt exist");
-                return;
+                if (!CurrGames.ContainsKey(game))
+                {
+                    Clients.Client(Context.ConnectionId).Message("game you are calling doesnt exist");
+                    return;
+                }
+                player = CurrGames[game].Players.Find(x => x.Name == name);
+                if (player == null)
+                {
+                    Clients.Client(Context.ConnectionId).Message("you are not part of game");
+                    return;
+                }
             }
-            var player = CurrGames[game].Players.Find(x => x.Name == name);
-            if (player == null)
-            {
-                Clients.Client(Context.ConnectionId).Message("you are not part of game");
-                return;
-            }
-            
             var tempImage = ImageTo64(Path.Combine(AppContext.BaseDirectory, "") + @"Content\Images\Heroes\" + player.HeroType.ToString().ToLower() + ".png");
-            List<byte[]> images = new List<byte[]>() ;
-            foreach( var i in player.CardsOnTable)
+            List<(byte[],string)> images = new List<(byte[],string)>() ;
+            foreach (var i in player.CardsOnTable)
             {
-                images.Add(
+                images.Add((
                     ImageTo64(
-                        Path.Combine(AppContext.BaseDirectory, "") 
-                        + @"Content\Images\PlayCards\" 
-                        + i.Type.ToString().ToLower() 
+                        Path.Combine(AppContext.BaseDirectory, "")
+                        + @"Content\Images\PlayCards\"
+                        + i.Type.ToString().ToLower()
                         + ".png")
+                    ,i.ID())
                     );
             }
             Clients

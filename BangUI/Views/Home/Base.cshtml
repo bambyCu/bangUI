@@ -10,18 +10,27 @@
                 <div class="w-100 d-flex justify-content-center">
                     <img id="heroPhoto" class="w-100 mx-auto" src="~/Content/Images/Heroes/bartcassidy.png" alt="Max-width 100%">
                 </div>
+
                 <div class="list-group">
                     <div id="characterHealth" class="list-group-item d-flex justify-content-center">HEALTH:</div>
                     <div id="characterRole" class="list-group-item d-flex justify-content-center">ROLE:</div>
                 </div>
+                <div id="discardPile" class="w-100 d-flex bg-success justify-content-center" style="height:100px">
+                    discard
+                </div>
+                <div class="w-100 d-flex bg-success justify-content-center">
+                    <button id ="btnEndTurn"type="button" class="btn btn-light border border-dark">
+                        ENDTURN
+                    </button>
+                </div>
+
             </div>
             <div class="container h-100 col-7 bg-primary">
-                <div id="enemies" class="row h-25 bg-light border" >
-                    
+                <div id="enemies" class="row h-25 bg-light border " >
                 </div>
-                <div class="h-50 mh-100 bg-dark border">
+                <div class="row h-50 mh-100 bg-dark border">
                     <div class="w-100 h-50 row">
-                        <img id="enemyPhoto" class=" mw-100 mh-100 col-4">
+                        <img id="enemyPhoto" class="mw-100 mh-100 col-4">
                         <div class="col ">
                             <ul id="enemyVals" class="text-white" style="list-style-type:none;">
                                 <li id="enemyNameL"></li>
@@ -31,18 +40,25 @@
                             </ul>
                         </div>
                     </div>
-                    <div id="enemyBlueCards" class=" h-50 bg-light"></div>
+                    <div id="enemyBlueCards" class=" h-50 w-100 bg-light"></div>
                 </div>
                 <div id="playCards" class="h-25 mh-100 bg-light border row" >
                 </div>
             </div>
             <div class="container h-100 text-white col bg-info">
-                <div id="loggedList" class="list-group">
-                    <div class="list-group-item list-group-item-secondary">Logged users:</div>
+                <div>
+                    <div id="loggedList" class="list-group" style="overflow-x:auto; height:250px;">
+                        <div class="list-group-item list-group-item-secondary">Logged users:</div>
+                    </div>
+                    <button id="gameStarter" class="w-100 list-group-item bg-danger">
+                        Start game
+                    </button>
                 </div>
-                <button id="gameStarter" class="w-100 list-group-item bg-danger">
-                    Start game
-                </button>
+                <div>
+                    <div id="messageList" class="list-group" style="font-size: 11px;overflow-x:auto; height: 250px;">
+                        Messages:
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -50,7 +66,7 @@
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div id="modalBody"class="modal-body">
+                <div id="modalBody" class="modal-body">
                 </div>
                 <div class="modal-footer">
                     <button id="invBtnYes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
@@ -59,6 +75,7 @@
             </div>
         </div>
     </div>
+
 
     <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
     <script src="~/signalr/js"></script>

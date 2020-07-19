@@ -29,5 +29,9 @@ namespace BangGame
                     $"type: {Type}\n";
         }
 
+        public string ID()
+        {
+            return Color.ToString() + Num.ToString();
+        }
     }
 }

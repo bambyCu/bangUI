@@ -55,7 +55,7 @@ namespace BangGame
             PlayCard.Prison
         };
 
-        private readonly static Dictionary<PlayCard, int> GunDistanceMap = new Dictionary<PlayCard, int>
+        public readonly static Dictionary<PlayCard, int> GunDistanceMap = new Dictionary<PlayCard, int>
         {
             {PlayCard.Remington,2},
             {PlayCard.Carabine,3},
@@ -78,7 +78,7 @@ namespace BangGame
             PlayCard.CatBalou,
             PlayCard.Panic};
 
-        private readonly static List<PlayCard> CardWithReactionFromOthers = new List<PlayCard> {
+        private readonly static List<PlayCard> AttackCards = new List<PlayCard> {
             PlayCard.Bang,
             PlayCard.Gatling,
             PlayCard.Duel,
@@ -94,6 +94,14 @@ namespace BangGame
             { 5, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw, Role.Deputy} },
             { 6, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw, Role.Outlaw, Role.Deputy} },
             { 7, new List<Role>() { Role.Sherif, Role.Renegate, Role.Outlaw, Role.Outlaw, Role.Outlaw, Role.Deputy, Role.Deputy } }
+        };
+
+        public static Dictionary<PlayCard, PlayCard> Remedies = new Dictionary<PlayCard, PlayCard>()
+        {
+            { PlayCard.Bang, PlayCard.Missed},
+            { PlayCard.Duel, PlayCard.Bang},
+            { PlayCard.Gatling, PlayCard.Missed},
+            { PlayCard.Indians, PlayCard.Bang}
         };
 
 
@@ -117,12 +125,21 @@ namespace BangGame
         {
             return Guns.Contains(c.Type);
         }
-        
+        public static bool IsOnlyCardToCard(Card c)
+        {
+            return OnlyCardToCard.Contains(c.Type);
+        }
+        public static bool IsAttackCard(Card p)
+        {
+            return AttackCards.Contains(p.Type);
+        }
+
         public static int GunDistance(PlayCard p)
         {
             return GunDistanceMap[p];
-
         }
+
         
+
     }
 }

@@ -43,10 +43,11 @@ namespace BangGame
             CardsInDeck.Remove(temp);
             return temp;
         }
+
         //function ignores null
         public void CardToPile(Card c)
         {
-            if(c == null) { return; }
+            if (c == null) { return; }
             CardsInPile.Add(c);
         }
 

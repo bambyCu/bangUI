@@ -5,6 +5,7 @@
     let ACTIVEBUTTONCLASS = "active"
     let GAMEID = "";
     let DRAGED = "";
+    let ENEMYSALT = "enem"
 
     let thyName = function (str) {
         let person = prompt(str, "");
@@ -71,25 +72,36 @@
         });
     }
 
+    let addToMessageList = function (message) {
+        document.getElementById("messageList").innerHTML += ("<br>" + message);
+    }
+
     function allowDrop(ev) {
         ev.preventDefault();
     }
 
     function drag(ev) {
         console.log("I drag now " + ev.target.id);
-
         DRAGED = ev.target.id;
         //ev.dataTransfer.setData("text", );
     }
 
-    function drop(ev) {
+    function playCard(ev) {
         ev.preventDefault();
-
-        console.log("I drop now " + DRAGED + " " + ev.target.id + " " + ev.currentTarget.id);
-
-        document.getElementById(DRAGED).remove();
-        //ev.target.appendChild(document.getElementById(data));
+        //console.log("I drop now " + DRAGED + " on " + ev.currentTarget.id);
+        myHub.server.applyGameIdCardTo(GAMEID, DRAGED, (ev.currentTarget.id).split("-")[1])
+            .done(function (val) {
+                if (val) {
+                    //document.getElementById(DRAGED).remove();
+                }
+                else {
+                    alert("incorrect use of card, or it is not yourturn");
+                }
+            })
+            .fail(function () { alert("it seems there is server problem") });
     }
+
+
 
     let setImage = function (byteArrayAsBase64, elementId) {
         document.getElementById(elementId).src = "data:image/png;base64," + byteArrayAsBase64;
@@ -106,12 +118,27 @@
     myHub.client.invitation = function (group, team) {
         $("#modalBody").text("does thou wish to play with " + team + " ?");
         $("#exampleModal").modal();
-        document.getElementById("invBtnYes").addEventListener("click", function () { inviteAccept(group);});
-        document.getElementById("invBtnNo").addEventListener("click", function () { inviteRefuse(group);});
+        document.getElementById("invBtnYes").addEventListener("click", function () { inviteAccept(group); });
+        document.getElementById("invBtnNo").addEventListener("click", function () { inviteRefuse(group); });
+    }
+
+    myHub.client.attacked = function (group, team) {
+        $("#attackModalBody").text("does thou wish to play with " + team + " ?");
+        $("#attackModal").modal();
+        document.getElementById("invBtnYes").addEventListener("click", function () {
+            myHub.server.block();
+        });
+        document.getElementById("invBtnNo").addEventListener("click", function () {
+                
+        });
     }
 
     myHub.client.invitationRefused = function (names) {
         $("#exampleModal").modal('hide');
+    }
+
+    myHub.client.addToMessageList = function (message) {
+        addToMessageList(message)
     }
 
     myHub.client.displayImage = function (cardByteArray64) {
@@ -127,7 +154,6 @@
         document.getElementById("characterRole").innerHTML = "ROLE:" + role;
     }
 
-
     myHub.client.addHandCard = function (cardByteArray64, cardId) {
         $('#playCards').append('<img id=\"' + cardId
             + '\"  class=\" col-2 mh-100 rounded mx-auto d-block\"'
@@ -138,39 +164,63 @@
         };
     }
 
+    myHub.client.addHandCards = function (listImageId) {
+        //listImage [(image, string)]
+        $('#playCards').empty();
+        for (let i = 0; i < listImageId.length; i++) {
+            myHub.client.addHandCard(listImageId[i].Item1, listImageId[i].Item2);
+        }
+    }
+
     myHub.client.addEnemy = function (name, health, role) {
-        let nameId = "enemyDiv"+ name;
+        let nameId = ENEMYSALT + "-" + name;
         $('#enemies').append(
-            "<div class=\"list-group h-100 col-2 \">"
+            "<div class=\"list-group h-100 col-2 overflow-hidden\">"
             + "<div class=\"list-group-item d-flex justify-content-center overflow-hidden\">NAME:" + name
             + "</div> <div class=\"list-group-item d-flex justify-content-center overflow-hidden\">HEALTH:" + health
             + "</div > <div class=\"list-group-item d-flex justify-content-center overflow-hidden\">ROLE:" + role + "</div>"
-            + '<div id="' + nameId + '"class=" border border-dark w-100 h-100" style="z-index: 3;top:0;left:0;position: absolute;">'
+            + '<div id="' + nameId + '" class="' + ENEMYSALT + ' border dark w-100 h-100" style="z - index: 3; top: 0; left: 0; position: absolute; opacity: .4;">'
             + "</div >");
         document.getElementById(nameId).ondragover = function (event) {
             allowDrop(event);
         };
         document.getElementById(nameId).ondrop = function (event) {
-            drop(event);
+            playCard(event);
         };
-
         document.getElementById(nameId).addEventListener("mouseover", function () {
             myHub.server.getInfoUser(GAMEID, name)
-                .done(function () { console.log("dfsdf"); })
+                .done(function () { })
                 .fail(function () { alert("sorry but connection is not great")});
         });
+    }
+
+    myHub.client.addEnemies = function (enemyList) {
+        //enemyList [(name, health, role)]
+        $('#enemies').empty();
+        for (let i = 0; i < enemyList.length; i++) {
+            myHub.client.addEnemy(enemyList[i].Item1, enemyList[i].Item2, enemyList[i].Item3);
+        }
     }
 
     myHub.client.setGameId = function (str) {
         GAMEID = str
     }
-    let elem = document.getElementById($(this).attr('id'));
+
+    myHub.client.setCurrPlayer = function (name) {
+        let temp = document.getElementsByClassName(ENEMYSALT);
+        for (let i = 0; i < temp.length; i++) {
+            temp[i].classList.remove("bg-danger")
+        }
+
+        console.log("nae is : " + ENEMYSALT + "-" + name);
+        document.getElementById(ENEMYSALT + "-" + name).className += " " + "bg-danger"; 
+    }
 
     myHub.client.message = function (str) {
         alert(str);
     }
 
-    myHub.client.setGameView = function (cardByteArray64, name, heroName, health, blueCards, handAmount,){
+    myHub.client.setGameView = function ( cardByteArray64, name, heroName, health, blueCards, handAmount,){
         setImage(cardByteArray64, "enemyPhoto");
         document.getElementById("enemyNameL").innerHTML = "NAME: " + name;
         document.getElementById("enemyHeroNameL").innerHTML = "HERO_NAME: " + heroName;
@@ -178,8 +228,11 @@
         document.getElementById("enemyCardsInHandL").innerHTML = "CARDS_IN_HAND: " + handAmount;
         $('#enemyBlueCards').empty();
         for (let i = 0; i < blueCards.length; i++) {
-            $('#enemyBlueCards').append('<img id=\"blueCard' + i + '\"  class=\" col-2 mh-100 rounded\"></img>');
-            setImage(blueCards[i], 'blueCard' + i);
+            let elemId = ENEMYSALT + "-" + blueCards[i].Item2;
+            $('#enemyBlueCards').append('<img id=\"' + elemId + '\"  class=\" col-2 mh-100 rounded\"></img>');
+
+            setImage(blueCards[i].Item1, elemId);
+            
         }
     }
 
@@ -194,8 +247,20 @@
                 .fail(function (e) { alert("there seems to be a problem" + e) });
             //document.getElementById("heroPhoto").src = "~/Content/Images/heroes/blackjack.png";
             thyName("give me thy name(alphanumeric shorter than 11 chars)")
-            
-
+            document.getElementById("discardPile").ondragover = function (event) {
+                allowDrop(event);
+            };
+            document.getElementById("discardPile").ondrop = function (event) {
+                event.preventDefault();
+                myHub.server.discard(DRAGED)
+                    .done(function () {
+                        //document.getElementById(DRAGED).remove();
+                    })
+                    .fail(function () { });
+            };
+            document.getElementById("btnEndTurn").addEventListener("click", function () {
+                myHub.server.endTurn();
+            })
         })
         .fail(function () { alert("this doesn't seem to work, bitch"); });
 

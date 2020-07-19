@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Security.Policy;
 using System.Text;
 
 namespace BangGame
@@ -29,6 +30,7 @@ namespace BangGame
             if (RoleType == Role.Sherif) { maxHealt++; }
             MaxHealth = maxHealt;
             Health = maxHealt;
+            Health = maxHealt;
         }
 
         public Player(string name, Hero heroType, Role roleType, int distanceFromOthers, int seeingDistance, int seeingAttackDistance, int maxHealt)
@@ -54,7 +56,7 @@ namespace BangGame
         }
 
 
-        //all functions that return Card return object that is to be placed into used pile
+        //all functions that return Card return object that is to be placed into used pile=
         private Card RemoveBlueCard(Card c)
         {
             if (CardInfo.IsCardYellow(c) || c == null) { return null; }
@@ -85,17 +87,17 @@ namespace BangGame
         private Card ApplyBlueCard(Card c)
         {
             if (CardInfo.IsCardYellow(c) || c == null) { return null; }
-            if (CardsOnTable.Find(f => CardInfo.IsCardGun(f)) != null){//if same card is at play, just throw new card into pile
+            if (CardsOnTable.Find(f => f.Type  == c.Type) != null){//if same card is at play, just throw new card into pile
                 return c;
             }
-            Card Temp;
-            if (CardInfo.IsCardGun(c) && (Temp = CardsOnTable.Find(f => CardInfo.IsCardGun(f))) != null)
+            Card temp =  CardsOnTable.Find(f => CardInfo.IsCardGun(f));
+            if (CardInfo.IsCardGun(c) && temp != null)//gun needs to be replaced 
             {
-                SeeingAttackDistance -= CardInfo.GunDistance(Temp.Type);
-                CardsOnTable.Remove(Temp);
+                SeeingAttackDistance -= CardInfo.GunDistance(temp.Type);
+                CardsOnTable.Remove(temp);
                 SeeingAttackDistance += CardInfo.GunDistance(c.Type);
                 CardsOnTable.Add(c);
-                return Temp;
+                return temp;
             }
             if (CardInfo.IsCardGun(c) && CardsOnTable.Find(f => CardInfo.IsCardGun(f)) == null) { SeeingAttackDistance += CardInfo.GunDistance(c.Type);}
             if(c.Type == PlayCard.Mirino) { SeeingDistance++; } 
@@ -121,5 +123,32 @@ namespace BangGame
             //return null;
         }
 
+        public bool TakeDamage()
+        {
+            Health--;
+            return Health <= 0;
+        }
+
+        public Card TakeBangDamage()
+        {
+            var temp = Hand.Find(x => x.Type == PlayCard.Missed);
+            if(temp == null)
+            {
+                Health--;
+            }
+            Hand.Remove(temp);
+            return temp;
+        }
+
+        public Card TakeIndiandDamage()
+        {
+            var temp = Hand.Find(x => x.Type == PlayCard.Missed);
+            if (temp == null)
+            {
+                Health--;
+            }
+            Hand.Remove(temp);
+            return temp;
+        }
     }
 }
