@@ -127,7 +127,10 @@ namespace BangGame
             if ((temp = GetCurrentTurnPlayer().CardsOnTable.Find(x => x.Type == PlayCard.Dynamite)) != null)
             {
                 var cardVal = DrawForEffect();
-                var num = Int32.Parse(cardVal.Num);
+                var num = (cardVal.Num == "A") ? 1 :
+                    (cardVal.Num == "K") ? 13 :
+                    (cardVal.Num == "A") ? 12 : 
+                    (cardVal.Num == "A") ? 11 : Int32.Parse(cardVal.Num);
                 if (cardVal.Color == CardColor.spade && (num <= 9 && num >= 2))
                 {
                     GetCurrentTurnPlayer().Health -= 3;

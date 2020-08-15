@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Owin.Security.Provider;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,9 +13,9 @@ namespace BangGame
 
         public List<Card> CardsInPile = new List<Card>();
 
-        public Deck(List<Card> cardsInDeck)
+        public Deck(List<Card> cardsToDeck)
         {
-            CardsInDeck = cardsInDeck;
+            CardsInDeck = cardsToDeck;
             Shuffle();
         }
         //this code has been donated from StackOverflow
@@ -47,8 +48,10 @@ namespace BangGame
         //function ignores null
         public void CardToPile(Card c)
         {
-            if (c == null) { return; }
-            CardsInPile.Add(c);
+            if (c != null)
+            {
+                CardsInPile.Add(c);
+            }
         }
 
         public Card TopOfPile()
@@ -61,11 +64,8 @@ namespace BangGame
         private void MixPiles()
         {
             if (CardsInPile.Count <= 1) { return; }
-            for(int i = 0; i < CardsInPile.Count-1; i++)
-            {
-                CardsInDeck.Add(CardsInPile[0]);
-                CardsInPile.RemoveAt(0);
-            }
+            CardsInDeck.AddRange(CardsInPile);
+            CardsInPile.Clear();
             Shuffle();
         }
     }
