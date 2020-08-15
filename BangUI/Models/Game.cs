@@ -289,17 +289,5 @@ namespace BangGame
         }
 
 
-
-        public PlayCard Attack(Player player, Card card)
-        {
-            return card.Type;
-        }
-
-        public void ApplyPlayerToPlayer(Player applier, Card c, Player victim)
-        {
-            
-        }
-
-
     }
 }
