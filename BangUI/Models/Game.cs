@@ -20,35 +20,27 @@ namespace BangGame
         public Game(List<string> names)
         {
             Names = names;
+            Players = new List<Player>();
             lock (CardInfo.AvailableCards)
             {
                 PlayDeck = new Deck(CardInfo.AvailableCards);
             }
-            if (!CardInfo.GameRoles.ContainsKey(names.Count))
-            {
-                //TO DO if game has wrong amount of players
-            }
             var random = new Random();
-            var gameRoles = new List<Role>(CardInfo.GameRoles[names.Count]);
+            var gameRoles = new List<Role>(CardInfo.GameSetup(names.Count));
             var heroRoles = new List<Player>(CardInfo.HeroVals);
-            Players = new List<Player>();
             foreach (var i in names)
             {
-                int randVal = random.Next(gameRoles.Count);
-                var role = gameRoles[randVal];
-                gameRoles.RemoveAt(randVal);
-                randVal = random.Next(heroRoles.Count);
-                var hero = heroRoles[randVal];
-                heroRoles.RemoveAt(randVal);
-                var nPlayer = new Player(i, hero.HeroType, role, hero.DistanceFromOthers, hero.SeeingDistance, hero.SeeingAttackDistance, hero.MaxHealth);
-                Players.Add(nPlayer);
-                for(int j = 0; j < nPlayer.MaxHealth;j++)
-                {
-                    nPlayer.Hand.Add(PlayDeck.Draw());
-                }
+                var role = gameRoles[random.Next(gameRoles.Count)];
+                gameRoles.Remove(role);
+                var hero = heroRoles[random.Next(gameRoles.Count)];
+                heroRoles.Remove(hero);
+                Players.Add(
+                    new Player(i, hero.HeroType, role, hero.DistanceFromOthers, hero.SeeingDistance, hero.SeeingAttackDistance, hero.MaxHealth)
+                    );
             }
-            GetCurrentTurnPlayer().Hand.Add(PlayDeck.Draw());
-            GetCurrentTurnPlayer().Hand.Add(PlayDeck.Draw());
+            Players.ForEach(x => x.Hand.AddRange(PlayDeck.Draw(x.MaxHealth)));
+            //start of turn
+            CurrentPlayer.Hand.AddRange(PlayDeck.Draw(2));
         }
 
         private Card DrawForEffect()
@@ -57,30 +49,33 @@ namespace BangGame
             PlayDeck.CardToPile(card);
             return card;
         } 
-        private int Distance(Player distanceStart, Player distanceEnd)
+        private int AttackDistance(Player distanceStart, Player distanceEnd)
         {
             var startInex = Players.FindIndex(x => distanceStart == x);
             var endInex = Players.FindIndex(x => distanceEnd == x);
             var distance = endInex - startInex;
-            return (distance < 0) ? -distance : distance;
+            distance = (distance < 0) ? -distance : distance;
+            distance = distance + Players[endInex].DistanceFromOthers - Players[startInex].SeeingAttackDistance - Players[startInex].SeeingDistance;
+            return distance;
         }
 
-        public Player GetCurrentTurnPlayer()
+        private Player CurrentPlayer
         {
-            return Players[CurrTurn];
+            get => Players[CurrTurn];
         }
-        public void DiscardCard(string player, string cardsId)
+        public void DiscardCard(string player, int cardsId)
         {
             var playerInstance = Players.Find(x => x.Name == player);
             DiscardCard(playerInstance, cardsId);
         }
-        public void DiscardCard(Player player, string cardsId)
+        public void DiscardCard(Player player, int cardsId)
         {
-            var card = player.Hand.Find(x => x.ID() == cardsId);
+            var card = player.Hand.Find(x => x.Id == cardsId);
             if (card == null)
             {
-                card = player.CardsOnTable.Find(x => x.ID() == cardsId);
-                if (card == null) { return; }
+                card = player.CardsOnTable.Find(x => x.Id == cardsId);
+                if (card == null) 
+                    throw (new Exception("player does not own the card "));
                 player.CardsOnTable.Remove(card);
             }
             else
@@ -89,12 +84,12 @@ namespace BangGame
             }
             PlayDeck.CardToPile(card);
         }
-        public void DiscardCards(string player, string[] cardsId)
+        public void DiscardCards(string player, int[] cardsId)
         {
             DiscardCards(player, cardsId);
         }
 
-        public void DiscardCards(Player player, string[] cardsId)
+        public void DiscardCards(Player player, int[] cardsId)
         {
             foreach(var i in cardsId)
             {
@@ -105,18 +100,11 @@ namespace BangGame
         public Role? IsGameFinshed()
         {
             if (Players.All(x => x.RoleType == Role.Outlaw)) 
-            {
                 return Role.Outlaw;
-            }
             if (Players.All(x => x.RoleType == Role.Sherif || x.RoleType == Role.Deputy))
-            {
                 return Role.Sherif;
-            }
-
             if (Players.All(x => x.RoleType == Role.Renegate))
-            {
                 return Role.Renegate;
-            }
             return null;
         }
 
@@ -124,16 +112,12 @@ namespace BangGame
         {
             CurrTurn = (CurrTurn + 1) % Players.Count;
             Card temp;
-            if ((temp = GetCurrentTurnPlayer().CardsOnTable.Find(x => x.Type == PlayCard.Dynamite)) != null)
+            if ((temp = CurrentPlayer.CardsOnTable.Find(x => x.Type == PlayCard.Dynamite)) != null)
             {
                 var cardVal = DrawForEffect();
-                var num = (cardVal.Num == "A") ? 1 :
-                    (cardVal.Num == "K") ? 13 :
-                    (cardVal.Num == "A") ? 12 : 
-                    (cardVal.Num == "A") ? 11 : Int32.Parse(cardVal.Num);
-                if (cardVal.Color == CardColor.spade && (num <= 9 && num >= 2))
+                if (cardVal.Color == CardColor.spade && int.TryParse(cardVal.Num, out _))
                 {
-                    GetCurrentTurnPlayer().Health -= 3;
+                    CurrentPlayer.Health -= 3;
                     evaluateDead();
                     PlayDeck.CardToPile(temp);
                     return NextTurn();
@@ -141,121 +125,99 @@ namespace BangGame
                 else
                 {
                     Players[(CurrTurn + 1) % Players.Count].CardsOnTable.Add(temp);
-                    GetCurrentTurnPlayer().CardsOnTable.Remove(temp);
+                    CurrentPlayer.CardsOnTable.Remove(temp);
                 }
             }
-            if ((temp = GetCurrentTurnPlayer().CardsOnTable.Find(x => x.Type == PlayCard.Prison)) != null)
+            if ((temp = CurrentPlayer.CardsOnTable.Find(x => x.Type == PlayCard.Prison)) != null)
             {
                 var cardVal = DrawForEffect();
-                GetCurrentTurnPlayer().CardsOnTable.Remove(temp);
+                CurrentPlayer.CardsOnTable.Remove(temp);
                 PlayDeck.CardToPile(temp);
-                if (cardVal.Color == CardColor.heart)
-                {
-                    GetCurrentTurnPlayer().CardsOnTable.Remove(temp);
-                    PlayDeck.CardToPile(temp);
+                if (cardVal.Color != CardColor.heart)
                     return NextTurn();
-                }
-                
             }
             canPlayBang = true;
-            Players[CurrTurn].Hand.Add(PlayDeck.Draw());
-            Players[CurrTurn].Hand.Add(PlayDeck.Draw());
+            Players[CurrTurn].Hand.AddRange(PlayDeck.Draw(2));
             return Players[CurrTurn];
         }
 
         private void evaluateDead()
         {
-            Players = Players.Where(x => x.Health > 0).ToList();
+            Players.RemoveAll(x => x.Health <= 0);
         }
-
-        public void applyCard(string  applicator, string card, string victim)
+        public void applyCard(string applicator, int card, string victim)
         {
-            LastMessage = "";
             var apInstance = Players.Find(x => x.Name == applicator);
-            var cardInstance = apInstance.Hand.Find(x => x.ID() == card);
             var vicInstance = Players.Find(x => x.Name == victim);
-            if (cardInstance.Type == PlayCard.Missed)
+            var cardInstance = apInstance.Hand.Find(x => x.Id == card);
+            if (apInstance == CurrentPlayer)
+                applyCard(cardInstance, vicInstance);
+        }
+        public void applyCard(Card card, Player victim)
+        {
+            if (card.Type == PlayCard.Missed)
             {
                 //apInstance.Hand.Remove(cardInstance);
                 //PlayDeck.CardToPile(cardInstance);
                 return;
             }
-            else if (CardInfo.IsSelfApplyCard(cardInstance))
+            else if (CardInfo.IsSelfApplyCard(card))
             {
-                LastMessage = applicator + " applied " + cardInstance.Type;
-                var tempCard = apInstance.ApplySelfCard(cardInstance);
-                apInstance.Hand.Remove(cardInstance);
+                var tempCard = CurrentPlayer.ApplySelfCard(card);
+                CurrentPlayer.Hand.Remove(card);
                 PlayDeck.CardToPile(tempCard);
                 return;
             }
-            if (cardInstance.Type == PlayCard.Prison || PlayCard.Dynamite == cardInstance.Type)
+            switch (card.Type)
             {
-                LastMessage = applicator + " applied " + cardInstance.Type + " to " + victim;
-                vicInstance.CardsOnTable.Add(cardInstance);
-            }
-            else if (cardInstance.Type == PlayCard.WellsFargo)
-            {
-                LastMessage = applicator + " applied " + cardInstance.Type;
-                apInstance.Hand.Add(PlayDeck.Draw());
-                apInstance.Hand.Add(PlayDeck.Draw());
-                apInstance.Hand.Add(PlayDeck.Draw());
-            }
-            else if (PlayCard.Diligenza == cardInstance.Type)
-            {
-                LastMessage = applicator + " applied " + cardInstance.Type;
-                apInstance.Hand.Add(PlayDeck.Draw());
-                apInstance.Hand.Add(PlayDeck.Draw());
-            }
-            else if (CardInfo.IsAttackCard(cardInstance))
-            {
-                if (cardInstance.Type == PlayCard.Bang)
-                {
-                    if (!canPlayBang)
-                    {
-                        LastMessage = applicator + " cant play bang";
+                case PlayCard.Dynamite:
+                    victim.CardsOnTable.Add(card);
+                    break;
+                case PlayCard.Prison:
+                    victim.CardsOnTable.Add(card);
+                    break;
+                case PlayCard.WellsFargo:
+                    CurrentPlayer.Hand.AddRange(PlayDeck.Draw(3)); ;
+                    break;
+                case PlayCard.Diligenza:
+                    CurrentPlayer.Hand.AddRange(PlayDeck.Draw(2));
+                    break;
+                case PlayCard.Bang:
+                    /*if ((true , true) != ( canPlayBang, AttackDistance(CurrentPlayer, victim) <= 0))
                         return;
-                    }
-                    if (vicInstance.CardsOnTable.Any(x => x.Type == PlayCard.Barel) &&
+                    if (victim.CardsOnTable.Any(x => x.Type == PlayCard.Barel) &&
                         DrawForEffect().Color == CardColor.heart)
                     {
-                        apInstance.Hand.Remove(cardInstance);
-                        PlayDeck.CardToPile(cardInstance);
-                        LastMessage = applicator + " applied " + cardInstance.Type + " to " + victim + "but Barel took it";
+                        CurrentPlayer.Hand.Remove(card);
+                        PlayDeck.CardToPile(card);
                         return;
                     }
-                    if (Distance(vicInstance, apInstance) + vicInstance.DistanceFromOthers - apInstance.SeeingAttackDistance - apInstance.SeeingDistance > 0)
+                    
+                    canPlayBang = false || CurrentPlayer.CardsOnTable.Any(x => x.Type == PlayCard.Volcanic);
+                    var discartedMiss = victim.TakeBangDamage();
+                    PlayDeck.CardToPile(discartedMiss);*/
+                    break;
+                case PlayCard.Gatling:
+                    /*foreach (var i in Players)
                     {
-                        LastMessage = applicator + "is too far from " + victim + " for " + cardInstance.Type;
-                        return;
-                    }
-                    canPlayBang = false || apInstance.CardsOnTable.Any(x => x.Type == PlayCard.Volcanic);
-                    LastMessage = applicator + " applied " + cardInstance.Type + " to " + victim;
-                    var discartedMiss = vicInstance.TakeBangDamage();
-                    PlayDeck.CardToPile(discartedMiss);
-                }
-                if (cardInstance.Type == PlayCard.Gatling)
-                {
-                    LastMessage = applicator + " applied " + cardInstance.Type ;
-                    foreach (var i in Players)
-                    {
-                        if (i == GetCurrentTurnPlayer())
+                        if (i == CurrentPlayer())
                         {
                             continue;
                         }
                         var discartedMiss = i.TakeBangDamage();
                         PlayDeck.CardToPile(discartedMiss);
-                    }
-                }
-                if (cardInstance.Type == PlayCard.Duel)
-                {
-                    Card temp;
+                    }*/
+                    break;
+                case PlayCard.Duel:
+                    /*
+                     Card temp;
                     while (true)
                     {
-                        temp = vicInstance.TakeIndiandDamage();
+                        temp = victim.TakeIndiandDamage();
                         PlayDeck.CardToPile(temp);
                         if (temp == null)
                         {
-                            LastMessage = applicator + " applied " + cardInstance.Type + " to " 
+                            LastMessage = applicator + " applied " + card.Type + " to "
                                 + victim + ", " + victim + "won";
                             break;
                         }
@@ -263,30 +225,34 @@ namespace BangGame
                         PlayDeck.CardToPile(temp);
                         if (temp == null)
                         {
-                            LastMessage = applicator + " applied " + cardInstance.Type + " to " 
+                            LastMessage = applicator + " applied " + card.Type + " to "
                                 + victim + ", " + applicator + "won";
                             break;
                         }
                     }
-                }
-                if (cardInstance.Type == PlayCard.Indians)
-                {
-                    foreach (var i in Players)
+                    */
+                    break;
+                case PlayCard.Indians:
+                    /*
+                     foreach (var i in Players)
                     {
-                        if (i == GetCurrentTurnPlayer()) 
+                        if (i == CurrentPlayer())
                         {
                             continue;
                         }
-                        LastMessage = applicator + " applied " + cardInstance.Type;
+                        LastMessage = applicator + " applied " + card.Type;
                         var discartedMiss = i.TakeIndiandDamage();
                         PlayDeck.CardToPile(discartedMiss);
                     }
-                }
+                     */
+                    break;
             }
-            apInstance.Hand.Remove(cardInstance);
-            PlayDeck.CardToPile(cardInstance);
+            CurrentPlayer.Hand.Remove(card);
+            PlayDeck.CardToPile(card);
             evaluateDead();
         }
+        //this is not exactly necessary but may be needed for game extentions
+        
 
 
     }

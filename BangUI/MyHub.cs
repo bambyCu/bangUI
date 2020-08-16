@@ -89,7 +89,7 @@ namespace SignalRTutorial
                     lock (Connections)
                     {
                         Clients.Client(Connections[i.Name]).AddEnemies(enemyPlayers);
-                        Clients.Client(Connections[i.Name]).SetCurrPlayer(CurrGames[gameId].GetCurrentTurnPlayer().Name);
+                        Clients.Client(Connections[i.Name]).SetCurrPlayer(CurrGames[gameId].CurrentPlayer().Name);
                     }
                 }
             }
@@ -122,7 +122,7 @@ namespace SignalRTutorial
             string mess;
             lock (CurrGames)
             {
-                if (CurrGames[gameId].GetCurrentTurnPlayer().Name != Name())
+                if (CurrGames[gameId].CurrentPlayer().Name != Name())
                 {
                     lock (Connections)
                     {
@@ -168,7 +168,7 @@ namespace SignalRTutorial
             {
                 var game = CurrGames[GameID()];
 
-                var player = game.GetCurrentTurnPlayer();
+                var player = game.CurrentPlayer();
                 if (Name() != player.Name)
                 {
                     lock (Connections)
@@ -199,10 +199,10 @@ namespace SignalRTutorial
                     UpdateGame(GameID());
                     return;
                 }
-                SendHandCards(game.GetCurrentTurnPlayer());
+                SendHandCards(game.CurrentPlayer());
                 foreach (var i in game.Names)
                 {
-                    Clients.Client(Connections[i]).SetCurrPlayer(game.GetCurrentTurnPlayer().Name);
+                    Clients.Client(Connections[i]).SetCurrPlayer(game.CurrentPlayer().Name);
                 }
             }
         }
@@ -320,7 +320,7 @@ namespace SignalRTutorial
                                 lock (Connections)
                                 {
                                     Clients.Client(Connections[i.Name]).SetGameView(tempImage, Name(), player.HeroType.ToString(), player.Health, images, player.Hand.Count);
-                                    Clients.Client(Connections[i.Name]).SetCurrPlayer(CurrGames[keyVal].GetCurrentTurnPlayer().Name);
+                                    Clients.Client(Connections[i.Name]).SetCurrPlayer(CurrGames[keyVal].CurrentPlayer().Name);
                                 }
                             }
                         }
