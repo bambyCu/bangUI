@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Ajax.Utilities;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,7 +17,7 @@ namespace BangGame
         public List<string> Names;
         private int CurrTurn = 0;
         public string LastMessage = "";
-        private bool canPlayBang = true; 
+        public bool canPlayBang = true; 
 
         public Game(List<string> names)
         {
@@ -43,13 +45,14 @@ namespace BangGame
             CurrentPlayer.Hand.AddRange(PlayDeck.Draw(2));
         }
 
-        private Card DrawForEffect()
+        public Card DrawForEffect()
         {
             var card = PlayDeck.Draw();
             PlayDeck.CardToPile(card);
             return card;
         } 
-        private int AttackDistance(Player distanceStart, Player distanceEnd)
+
+        public int AttackDistance(Player distanceStart, Player distanceEnd)
         {
             var startInex = Players.FindIndex(x => distanceStart == x);
             var endInex = Players.FindIndex(x => distanceEnd == x);
@@ -58,8 +61,23 @@ namespace BangGame
             distance = distance + Players[endInex].DistanceFromOthers - Players[startInex].SeeingAttackDistance - Players[startInex].SeeingDistance;
             return distance;
         }
-
-        private Player CurrentPlayer
+        public void NewRound()
+        {
+            CurrTurn = (1 + CurrTurn) % Players.Count;
+        }
+        public void PassCardOnTableToNext(PlayCard cardType)
+        {
+            var card = CurrentPlayer.CardsOnTable.Find(x => x.Type == cardType);
+            if (card == null)
+                return;
+            CurrentPlayer.CardsOnTable.Remove(card);
+            NextPlayer().CardsOnTable.Add(card);
+        }
+        public Player NextPlayer()
+        {
+            return Players[(CurrTurn + 1) % Players.Count]; 
+        }
+        public Player CurrentPlayer
         {
             get => Players[CurrTurn];
         }
@@ -108,51 +126,6 @@ namespace BangGame
             return null;
         }
 
-        public Player NextTurn()
-        {
-            CurrTurn = (CurrTurn + 1) % Players.Count;
-            Card temp;
-            if ((temp = CurrentPlayer.CardsOnTable.Find(x => x.Type == PlayCard.Dynamite)) != null)
-            {
-                var cardVal = DrawForEffect();
-                if (cardVal.Color == CardColor.spade && int.TryParse(cardVal.Num, out _))
-                {
-                    CurrentPlayer.Health -= 3;
-                    evaluateDead();
-                    PlayDeck.CardToPile(temp);
-                    return NextTurn();
-                }
-                else
-                {
-                    Players[(CurrTurn + 1) % Players.Count].CardsOnTable.Add(temp);
-                    CurrentPlayer.CardsOnTable.Remove(temp);
-                }
-            }
-            if ((temp = CurrentPlayer.CardsOnTable.Find(x => x.Type == PlayCard.Prison)) != null)
-            {
-                var cardVal = DrawForEffect();
-                CurrentPlayer.CardsOnTable.Remove(temp);
-                PlayDeck.CardToPile(temp);
-                if (cardVal.Color != CardColor.heart)
-                    return NextTurn();
-            }
-            canPlayBang = true;
-            Players[CurrTurn].Hand.AddRange(PlayDeck.Draw(2));
-            return Players[CurrTurn];
-        }
-
-        private void evaluateDead()
-        {
-            Players.RemoveAll(x => x.Health <= 0);
-        }
-        public void applyCard(string applicator, int card, string victim)
-        {
-            var apInstance = Players.Find(x => x.Name == applicator);
-            var vicInstance = Players.Find(x => x.Name == victim);
-            var cardInstance = apInstance.Hand.Find(x => x.Id == card);
-            if (apInstance == CurrentPlayer)
-                applyCard(cardInstance, vicInstance);
-        }
         public void applyCard(Card card, Player victim)
         {
             if (card.Type == PlayCard.Missed)
@@ -249,10 +222,9 @@ namespace BangGame
             }
             CurrentPlayer.Hand.Remove(card);
             PlayDeck.CardToPile(card);
-            evaluateDead();
         }
         //this is not exactly necessary but may be needed for game extentions
-        
+
 
 
     }

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Policy;
 using System.Text;
 
@@ -19,6 +20,8 @@ namespace BangGame
         public int MaxHealth { get; set; }
         public int Health { get; set; }
 
+        public bool IsAlive { get; set; }
+
         public Player(string name, Hero heroType, Role roleType, int distanceFromOthers, int seeingDistance, int seeingAttackDistance, int maxHealt)
         {
             Name = name;
@@ -30,6 +33,7 @@ namespace BangGame
             if (RoleType == Role.Sherif) { maxHealt++; }
             MaxHealth = maxHealt;
             Health = maxHealt;
+            IsAlive = true;
         }
 
         public Player(string heroType, int distanceFromOthers, int seeingDistance, int seeingAttackDistance, int maxHealt)
@@ -39,6 +43,7 @@ namespace BangGame
             SeeingDistance = seeingDistance;
             SeeingAttackDistance = seeingAttackDistance;
             MaxHealth = maxHealt;
+            IsAlive = true;
         }
 
 
@@ -113,10 +118,16 @@ namespace BangGame
             //if this exception has been thrown CardInfo has been incorrectly changed
             //return null;
         }
-
+        public bool HasOnTable(PlayCard cardType) =>
+            CardsOnTable.Any(x => x.Type == cardType);
         public bool TakeDamage()
         {
             Health--;
+            return Health <= 0;
+        }
+        public bool TakeDamage(int amount)
+        {
+            Health = Health - amount;
             return Health <= 0;
         }
 

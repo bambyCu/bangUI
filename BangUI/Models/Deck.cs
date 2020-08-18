@@ -11,9 +11,9 @@ namespace BangGame
 {
     public class Deck
     {
-        public List<Card> CardsInDeck = new List<Card>();
+        private List<Card> CardsInDeck = new List<Card>();
 
-        public List<Card> CardsInPile = new List<Card>();
+        private List<Card> CardsInPile = new List<Card>();
 
         public Deck(List<Card> cardsToDeck)
         {
@@ -34,6 +34,11 @@ namespace BangGame
                 CardsInDeck[k] = CardsInDeck[n];
                 CardsInDeck[n] = value;
             }
+        }
+
+        public void PutCardOnDeck(Card c)
+        {
+            CardsInDeck.Insert(0, c);
         }
 
         public Card Draw()

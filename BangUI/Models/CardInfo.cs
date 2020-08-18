@@ -59,7 +59,7 @@ namespace BangGame
             PlayCard.Mustang,
         };
 
-        private readonly static Dictionary<PlayCard, int> GunDistanceMap = new Dictionary<PlayCard, int>
+        public readonly static Dictionary<PlayCard, int> GunDistanceMap = new Dictionary<PlayCard, int>
         {
             {PlayCard.Remington,2},
             {PlayCard.Carabine,3},
@@ -68,7 +68,7 @@ namespace BangGame
             {PlayCard.Winchester,4}
         };
 
-        private static Dictionary<PlayCard, PlayCard> AttackCardsToRemedies = new Dictionary<PlayCard, PlayCard>()
+        public static Dictionary<PlayCard, PlayCard> AttackCardsToRemedies = new Dictionary<PlayCard, PlayCard>()
         {
             { PlayCard.Bang, PlayCard.Missed},
             { PlayCard.Duel, PlayCard.Bang},
