@@ -12,13 +12,16 @@ namespace BangUI.Models
 {
     public class GameWrapper
     {
-        public Hub IOHub;
-        public Game BangGame;
-        public AttackManager Attacks;
-        private Player CurrentPlayer => BangGame.CurrentPlayer;
-        public GameWrapper(ref Hub IOHub,ref  Game BangGame) =>
+        private Hub IOHub;
+        private Game BangGame;
+        private AttackManager Attacks;
+        public Player CurrentPlayer => BangGame.CurrentPlayer;
+        public GameWrapper(Hub IOHub, Game BangGame) =>
             (this.IOHub, this.BangGame) = (IOHub, BangGame);
-
+        public List<Player> Players
+        {
+            get => BangGame.Players;
+        }
 
 
         private void StartPhaseOne()
@@ -28,6 +31,8 @@ namespace BangUI.Models
 
         private bool DrawForEffect(System.Func<Card, bool> funct) =>
             funct(BangGame.DrawForEffect());
+        public void DiscardCard(string player, int id) =>
+            BangGame.DiscardCard(player, id);
 
         public void nextTurn()
         {

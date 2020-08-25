@@ -145,8 +145,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AttackManager.cs" />
     <Compile Include="Models\BangEnum\CardColor.cs" />
-    <Compile Include="Models\BangEnum\CardValues.cs" />
     <Compile Include="Models\BangEnum\Hero.cs" />
     <Compile Include="Models\BangEnum\PlayCard.cs" />
     <Compile Include="Models\BangEnum\Role.cs" />
@@ -155,6 +155,7 @@
     <Compile Include="Models\Deck.cs" />
     <Compile Include="Models\FilesInfo.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\GameWrapper.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="MyHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

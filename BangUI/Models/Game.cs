@@ -54,11 +54,21 @@ namespace BangGame
 
         public int AttackDistance(Player distanceStart, Player distanceEnd)
         {
-            var startInex = Players.FindIndex(x => distanceStart == x);
-            var endInex = Players.FindIndex(x => distanceEnd == x);
-            var distance = endInex - startInex;
-            distance = (distance < 0) ? -distance : distance;
-            distance = distance + Players[endInex].DistanceFromOthers - Players[startInex].SeeingAttackDistance - Players[startInex].SeeingDistance;
+            var distance = 0;
+            var found = false;
+            for(int i = 0; ; i++)
+            {
+                if (Players[i] == distanceStart || Players[i] == distanceEnd)
+                {
+                    if (found)
+                        return distance + 
+                            distanceEnd.DistanceFromOthers - 
+                            distanceStart.SeeingAttackDistance - 
+                            distanceStart.SeeingDistance;
+                    found = true;
+                    distance++;
+                }
+            }
             return distance;
         }
         public void NewRound()

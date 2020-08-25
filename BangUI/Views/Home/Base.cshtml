@@ -3,67 +3,78 @@
 }
 @section scripts{
 
-    <div class=" fixed-top w-100 align-top" style="height: 100vh;">
-        <div class="row h-100 w-100 align-items-center">
-            <div class="w-100 h-100 col bg-info">
-                <div id="nameHold" class="d-flex justify-content-center text-white text-white">name:</div>
-                <div class="w-100 d-flex justify-content-center">
-                    <img id="heroPhoto" class="w-100 mx-auto" src="~/Content/Images/Heroes/bartcassidy.png" alt="Max-width 100%">
-                </div>
-
-                <div class="list-group">
-                    <div id="characterHealth" class="list-group-item d-flex justify-content-center">HEALTH:</div>
-                    <div id="characterRole" class="list-group-item d-flex justify-content-center">ROLE:</div>
-                </div>
-                <div id="discardPile" class="w-100 d-flex bg-success justify-content-center" style="height:100px">
-                    discard
-                </div>
-                <div class="w-100 d-flex bg-success justify-content-center">
-                    <button id ="btnEndTurn"type="button" class="btn btn-light border border-dark">
-                        ENDTURN
-                    </button>
-                </div>
-
+    <div class="w-100 row p-0 m-0" style="height: 100vh;">
+        <div class="w-100 h-100 col bg-info p-0">
+            <div id="nameHold" class="d-flex justify-content-center text-white text-white">name:</div>
+            <div class="w-100">
+                <img id="heroPhoto" class="w-100 mx-auto" src="~/Models/Images/Heroes/bartcassidy.png" alt="Max-width 100%">
             </div>
-            <div class="container h-100 col-7 bg-primary">
-                <div id="enemies" class="row h-25 bg-light border " >
-                </div>
-                <div class="row h-50 mh-100 bg-dark border">
-                    <div class="w-100 h-50 row">
-                        <img id="enemyPhoto" class="mw-100 mh-100 col-4">
-                        <div class="col ">
-                            <ul id="enemyVals" class="text-white" style="list-style-type:none;">
-                                <li id="enemyNameL"></li>
-                                <li id="enemyHeroNameL"></li>
-                                <li id="enemyHealthL"></li>
-                                <li id="enemyCardsInHandL"></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div id="enemyBlueCards" class=" h-50 w-100 bg-success"></div>
-                </div>
-                <div id="playCards" class="h-25 mh-100 bg-light border row" >
-                </div>
+
+            <ul class="list-group bg-white">
+                <li id="characterHealth" class="border border-dark">HEALTH:</li>
+                <li id="characterRole" class="border border-dark">ROLE:</li>
+            </ul>
+            <div id="discardPile" class="w-100 d-flex bg-success justify-content-center" style="height:100px">
+                discard
             </div>
-            <div class="container h-100 text-white col bg-info">
-                <div>
-                    <div id="loggedList" class="list-group" style="overflow-x:auto; height:250px;">
-                        <div class="list-group-item list-group-item-secondary">Logged users:</div>
+            <div class="w-100 d-flex bg-success justify-content-center">
+                <button id="btnEndTurn" type="button" class="btn btn-light border border-dark">
+                    ENDTURN
+                </button>
+            </div>
+
+        </div>
+        <div class="container h-100 col-7 bg-primary">
+            <div id="enemies" class="row h-25 bg-light border ">
+            </div>
+            <div class="row h-50 mh-100 bg-dark border">
+                <div class="w-100 h-50 row">
+                    <img id="enemyPhoto" class="mw-100 mh-100 col-4">
+                    <div class="col ">
+                        <ul id="enemyVals" class="text-white" style="list-style-type:none;">
+                            <li id="enemyNameL"></li>
+                            <li id="enemyHeroNameL"></li>
+                            <li id="enemyHealthL"></li>
+                            <li id="enemyCardsInHandL"></li>
+                        </ul>
                     </div>
-                    <button id="gameStarter" class="w-100 list-group-item bg-danger">
-                        Start game
-                    </button>
                 </div>
-                <div>
-                    <div id="messageList" class="list-group" style="font-size: 11px;overflow-x:auto; height: 250px;">
-                        Messages:
-                    </div>
+                <div id="enemyBlueCards" class=" h-50 w-100 bg-success"></div>
+            </div>
+            <div id="playCards" class="h-25 mh-100 bg-light border row">
+            </div>
+        </div>
+        <div class="container h-100 text-white col bg-info p-0">
+            <div>
+                <div id="loggedList" class="list-group " style="overflow-x:auto; height:250px;">
+                    <div class="list-group-item list-group-item-secondary">Logged users:</div>
+                </div>
+                <button id="gameStarter" class="w-100 list-group-item bg-danger">
+                    Start game
+                </button>
+            </div>
+            <div>
+                <div id="messageList" class="list-group" style="font-size: 11px;overflow-x:auto; height: 250px;">
+                    Messages:
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalInvite" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div id="modalBody" class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button id="invBtnYes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                    <button id="invBtnNo" type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEmporio" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div id="modalBody" class="modal-body">

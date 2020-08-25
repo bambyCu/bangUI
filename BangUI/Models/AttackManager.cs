@@ -29,7 +29,6 @@ namespace BangUI.Models
             AttackCard = cardType;
             Victims.Add(victim);
             ThreadHolder[victim.Name]= new Thread(() => TakeDamage(victim));
-            IsAttackFinished = false;
             return true;
         }
 
@@ -42,7 +41,7 @@ namespace BangUI.Models
                 return true;
             }
                 
-            return false;
+            return false; 
         }
 
         private void TakeDamage(Player victim)
