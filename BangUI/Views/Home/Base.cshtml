@@ -3,13 +3,14 @@
 }
 @section scripts{
 
+    <link rel="stylesheet" href="~/Content/BaseCss.css">
+
     <div class="w-100 row p-0 m-0" style="height: 100vh;">
         <div class="w-100 h-100 col bg-info p-0">
             <div id="nameHold" class="d-flex justify-content-center text-white text-white">name:</div>
             <div class="w-100">
                 <img id="heroPhoto" class="w-100 mx-auto" src="~/Models/Images/Heroes/bartcassidy.png" alt="Max-width 100%">
             </div>
-
             <ul class="list-group bg-white">
                 <li id="characterHealth" class="border border-dark">HEALTH:</li>
                 <li id="characterRole" class="border border-dark">ROLE:</li>
@@ -22,28 +23,15 @@
                     ENDTURN
                 </button>
             </div>
+        </div>
 
+
+        <div class="h-100 col-7 bg-primary p-0">
+            <div onmouseover="chg()" onmouseout="chg2()" class="animated" id="d1">Hover Over Me!</div>
+            <div id="myDiv"></div>
         </div>
-        <div class="container h-100 col-7 bg-primary">
-            <div id="enemies" class="row h-25 bg-light border ">
-            </div>
-            <div class="row h-50 mh-100 bg-dark border">
-                <div class="w-100 h-50 row">
-                    <img id="enemyPhoto" class="mw-100 mh-100 col-4">
-                    <div class="col ">
-                        <ul id="enemyVals" class="text-white" style="list-style-type:none;">
-                            <li id="enemyNameL"></li>
-                            <li id="enemyHeroNameL"></li>
-                            <li id="enemyHealthL"></li>
-                            <li id="enemyCardsInHandL"></li>
-                        </ul>
-                    </div>
-                </div>
-                <div id="enemyBlueCards" class=" h-50 w-100 bg-success"></div>
-            </div>
-            <div id="playCards" class="h-25 mh-100 bg-light border row">
-            </div>
-        </div>
+
+
         <div class="container h-100 text-white col bg-info p-0">
             <div>
                 <div id="loggedList" class="list-group " style="overflow-x:auto; height:250px;">
@@ -90,5 +78,11 @@
 
     <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
     <script src="~/signalr/js"></script>
-    <script src="~/Scripts/base.js"></script>
+    <script src="~/Scripts/my_scripts/hubClass.js"></script>
+    <script src="~/Scripts/my_scripts/CardsOnTableClass.js"></script>
+
+    <script src="~/Scripts/my_scripts/clientHubFunctions.js"></script>
+    <script src="~/Scripts/my_scripts/base.js"></script>
+
+
 }

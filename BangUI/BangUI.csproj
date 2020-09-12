@@ -165,6 +165,9 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\BaseCss.css">
+      <BrowseToURL>~/Content/MyCss.css</BrowseToURL>
+    </Content>
     <Content Include="Models\Images\backOfCard.jpg" />
     <Content Include="Models\Images\heroes\bartcassidy.png" />
     <Content Include="Models\Images\heroes\blackjack.png" />
@@ -210,7 +213,7 @@
     <Content Include="Models\Images\roles\vice.png" />
     <Content Include="Models\Decks\HeroCards.txt" />
     <Content Include="Models\Decks\PlayingCards.txt" />
-    <Content Include="Scripts\base.js" />
+    <Content Include="Scripts\my_scripts\base.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -219,8 +222,13 @@
     <Content Include="Scripts\esm\popper-utils.min.js" />
     <Content Include="Scripts\esm\popper.js" />
     <Content Include="Scripts\esm\popper.min.js" />
-    <Content Include="Scripts\login.js" />
-    <Content Include="Scripts\MyJavaS.js" />
+    <Content Include="Scripts\my_scripts\CardsOnTableClass.js" />
+    <Content Include="Scripts\my_scripts\clientHubFunctions.js" />
+    <Content Include="Scripts\my_scripts\HandScript.js" />
+    <Content Include="Scripts\my_scripts\hand_js_test.js" />
+    <Content Include="Scripts\my_scripts\hubClass.js" />
+    <Content Include="Scripts\my_scripts\login.js" />
+    <Content Include="Scripts\my_scripts\MyJavaS.js" />
     <Compile Include="Startup1.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +262,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\p5.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />

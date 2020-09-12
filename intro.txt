@@ -1,0 +1,17 @@
+I will explain classes:
+-Game
+-GameWrapper
+-AttakManager
+-MyHub
+
+- in Game class are all basic necessary bang functionis for which is not needed communication between multiple users trough internet,
+like applying blue cards, or adding life or applying panic or cat balou
+
+- GameWrapper contains Game class, GameWrapper takes care of everything that includes comunications between users (attacking and applying card miss)
+this is taken care of by class AttackManager in variable Attacks, AttackManager contains list of threads that work as representation of attacks
+with timers. If time on timer expires victim of attack takes damage, if victim will block attack before timer expires he will not take damage
+
+-also GameWrapper and Game comunicate between eachother by reference to eachother
+
+-MyHub is used for comunications to client throught javascript, MyHub has stored all connected users(might change, might work on login) and current games,
+MyHub can call on functions in clients javascript and clients javascript can call MyHubs functions 
