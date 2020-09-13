@@ -1,6 +1,8 @@
 ﻿
-let myHub = new Hub($.connection.mainHub);
-let hand = new CardsOnTable("myDiv");
+const myHub = new Hub($.connection.mainHub);
+const hand = new CardsOnTable("handDiv");
+const table = new CardsOnTable("tableDiv"); 
+const enemies = [];
 const SALT = "theUser";
 
 
@@ -14,11 +16,12 @@ let actAppl = function () {
         elem.classList.add("active");
     }
 };
-
+/*
 let addToLogged = function (str) {
     $('#loggedList').append('<button id=\"' + SALT + str + '\" type=\"button\" class=\"list-group-item myBtn\">' + str + '</button>');
     document.getElementById(SALT + str).addEventListener("click", actAppl);
 }
+*/
 
 
 
@@ -78,16 +81,6 @@ function chg2() {
 
 
 
-
-
-
-
-
-    let addToMessageList = function (message) {
-        messageDiv = document.getElementById("messageList");
-        messageDiv.innerHTML += ("<br>" + message);
-    }
-
     function allowDrop(ev) {
         ev.preventDefault();
     }
@@ -100,7 +93,6 @@ function chg2() {
 
     function playCard(ev) {
         ev.preventDefault();
-        //console.log("I drop now " + DRAGED + " on " + ev.currentTarget.id);
         myHub.server.applyGameIdCardTo(GAMEID, DRAGED, (ev.currentTarget.id).split("-")[1])
             .done(function (val) {
                 if (val) {
@@ -115,7 +107,7 @@ function chg2() {
 
 window.onload = function () {
     window.addEventListener('resize', () => setTimeout(() => { hand.setUpCards(); }, 200));
-    document.getElementById("discardPile").ondragover = function (event) {
+    /*document.getElementById("discardPile").ondragover = function (event) {
         allowDrop(event);
     };
     document.getElementById("discardPile").ondrop = function (event) {
@@ -128,8 +120,8 @@ window.onload = function () {
     };
     document.getElementById("btnEndTurn").addEventListener("click", function () {
         myHub.server.endTurn();
-    })
-    document.getElementById("gameStarter").onclick = function () { startGame(); };     
+    })*/
+    //document.getElementById("gameStarter").onclick = function () { startGame(); };     
 }
 
     
@@ -137,7 +129,7 @@ $.connection.hub.start()
     .done(function () {
         myHub.users.forEach(name => addToLogged(name));
         myHub.userLogIn("give me thy name(alphanumeric shorter than 11 chars)");
-        setImage("bang", "heroPhoto");
+        setImage("bang", "userImage");
         console.log(myHub.cardImages["bang"]);
         setTimeout(() => { hand.addImageElement("lala", myHub.cardImages["bang"]); }, 200);
         ;

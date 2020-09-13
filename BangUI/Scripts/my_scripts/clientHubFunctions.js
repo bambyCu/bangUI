@@ -6,7 +6,7 @@
         document.getElementById("invBtnYes").addEventListener("click", function () { inviteAccept(); });
         document.getElementById("invBtnNo").addEventListener("click", function () { inviteRefuse(); });
     }
-
+    /*
     myHub.client.logIn = function (user) {
         addToLogged(user);
     }
@@ -14,7 +14,7 @@
     myHub.client.disconnect = function (user) {
         removeFromLogged(user);
     }
-
+    */
 
     myHub.client.attacked = function (group, team) {
         $("#attackModalBody").text("does thou wish to play with " + team + " ?");
@@ -23,7 +23,6 @@
             myHub.server.block();
         });
         document.getElementById("invBtnNo").addEventListener("click", function () {
-
         });
     }
 

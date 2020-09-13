@@ -224,6 +224,7 @@
     <Content Include="Scripts\esm\popper.min.js" />
     <Content Include="Scripts\my_scripts\CardsOnTableClass.js" />
     <Content Include="Scripts\my_scripts\clientHubFunctions.js" />
+    <Content Include="Scripts\my_scripts\enemyClass.js" />
     <Content Include="Scripts\my_scripts\HandScript.js" />
     <Content Include="Scripts\my_scripts\hand_js_test.js" />
     <Content Include="Scripts\my_scripts\hubClass.js" />

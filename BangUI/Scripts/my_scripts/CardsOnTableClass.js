@@ -15,9 +15,26 @@
         newImage.id = id;
         newImage.style.width = this.cardWidth + "px";
         newImage.style.height = this.cardHeight + "px";
-        newImage.position = "absolute";
+        newImage.style.position = "absolute";
+        /*newImage.addEventListener("mouseover", function (event) {
+            console.log(event.target);
+            event.target.style.bottom = event.target.height + "px";
+        }, false);
+        newImage.addEventListener("mouseout", function (event) {
+            console.log(event.target);
+            event.target.style.bottom = 0 + "px";
+        }, false);*/
         document.getElementById(id).src = "data:image/png;base64," + byteArray;
         this.setUpCards(id);
+    }
+
+    removeCard(id) {
+        document.getElementById(id).remove();
+        const index = this.cards.indexOf(id);
+        if (index > -1) {
+            this.cards.splice(index, 1);
+        }
+        this.setUpCards();
     }
 
     showCard(cardId) {
@@ -25,18 +42,18 @@
         //this.cards.forEach(x => document.getElementById(x).style.marginBottom = (x == cardId) ? "100%" : "");
     }
 
-    setUpCard(cardId) {
-        document.getElementById(cardId).style.marginLeft = this.distanceBetweenCardsInPercent + "%";
-    }
-
     setUpCards() {
         this.tableSpecs = document.getElementById(this.table).getBoundingClientRect();
+        let cardMargin = 100 / (this.cards.length + 1);
+        let cardSize = this.cardWidth / this.tableSpecs.width * 100 / 2;
+        if (cardMargin < cardSize)
+            cardMargin = 100 / (this.cards.length);
         for (let i = 0; i < this.cards.length; i++) {
-            if (this.distanceBetweenCardsInPercent < 0 && i == 0) {
+            if (i == 0 && cardMargin < cardSize) {
                 document.getElementById(this.cards[i]).style.marginLeft = 0;
                 continue;
             }
-            this.setUpCard(this.cards[i]);
+            document.getElementById(this.cards[i]).style.marginLeft = (cardMargin * (i + 1)) - cardSize + "%";
         }
         
     }

@@ -23,7 +23,6 @@ namespace BangUI.Models
             get => BangGame.Players;
         }
 
-
         private void StartPhaseOne()
         {
             CurrentPlayer.Hand.AddRange(BangGame.PlayDeck.Draw(2));
@@ -69,8 +68,11 @@ namespace BangUI.Models
         public void applyCard(Player attacker, Card card, Player victim)
         {
             if (!victim.IsAlive || !attacker.IsAlive)
+                //TODO
                 return;
-            if (!CardInfo.IsAttackCard(card))
+            //TODO
+            //if(card.Type == Miss)
+            if ( !CardInfo.IsAttackCard(card))
             {
                 BangGame.applyCard(card, victim);
             }

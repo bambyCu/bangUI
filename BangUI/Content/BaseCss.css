@@ -1,10 +1,31 @@
-﻿#myDiv {
-    position: absolute;
+﻿#tableDiv {
+    width: 100%;
+    height: 200px;
+    background-color: blue;
+}
+
+#handDiv {
     width: 100%;
     height: 200px;
     background-color: coral;
-    color: white;
 }
+
+.heroImage {
+    width: 250px;
+    height: 390px;
+    margin: auto;
+}
+
+table {
+    background-color: white;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
 .animated {
     background-color: RGB(177, 0, 0);
     color: white;

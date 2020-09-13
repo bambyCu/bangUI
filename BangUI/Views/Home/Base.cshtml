@@ -7,45 +7,33 @@
 
     <div class="w-100 row p-0 m-0" style="height: 100vh;">
         <div class="w-100 h-100 col bg-info p-0">
-            <div id="nameHold" class="d-flex justify-content-center text-white text-white">name:</div>
-            <div class="w-100">
-                <img id="heroPhoto" class="w-100 mx-auto" src="~/Models/Images/Heroes/bartcassidy.png" alt="Max-width 100%">
+            <div id="userImage" class="heroImage">
+                <img src="~/Models/Images/Heroes/bartcassidy.png" alt="Max-width 100%">
             </div>
-            <ul class="list-group bg-white">
-                <li id="characterHealth" class="border border-dark">HEALTH:</li>
-                <li id="characterRole" class="border border-dark">ROLE:</li>
-            </ul>
-            <div id="discardPile" class="w-100 d-flex bg-success justify-content-center" style="height:100px">
-                discard
-            </div>
-            <div class="w-100 d-flex bg-success justify-content-center">
-                <button id="btnEndTurn" type="button" class="btn btn-light border border-dark">
-                    ENDTURN
-                </button>
-            </div>
+            <table>
+                <tr>
+                    <td>HEALTH:</td>
+                    <td id="heroHealth">0</td>
+                </tr>
+                <tr>
+                    <td>ROLE:</td>
+                    <td id="heroRole">K</td>
+                </tr>
+            </table>
+
+            <div id="handDiv" class="tableCards"></div>
+            <div id="tableDiv" class="tableCards"></div>
         </div>
 
 
-        <div class="h-100 col-7 bg-primary p-0">
-            <div onmouseover="chg()" onmouseout="chg2()" class="animated" id="d1">Hover Over Me!</div>
-            <div id="myDiv"></div>
+        <div class="h-100 col-4 bg-primary p-0">
+
+
+
         </div>
 
 
-        <div class="container h-100 text-white col bg-info p-0">
-            <div>
-                <div id="loggedList" class="list-group " style="overflow-x:auto; height:250px;">
-                    <div class="list-group-item list-group-item-secondary">Logged users:</div>
-                </div>
-                <button id="gameStarter" class="w-100 list-group-item bg-danger">
-                    Start game
-                </button>
-            </div>
-            <div>
-                <div id="messageList" class="list-group" style="font-size: 11px;overflow-x:auto; height: 250px;">
-                    Messages:
-                </div>
-            </div>
+        <div id="enemyDiv"class="container h-100 col bg-info p-0">
         </div>
     </div>
 
@@ -62,23 +50,11 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalEmporio" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div id="modalBody" class="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button id="invBtnYes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
-                    <button id="invBtnNo" type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
     <script src="~/signalr/js"></script>
     <script src="~/Scripts/my_scripts/hubClass.js"></script>
+    <script src="~/Scripts/my_scripts/enemyClass.js"></script>
     <script src="~/Scripts/my_scripts/CardsOnTableClass.js"></script>
 
     <script src="~/Scripts/my_scripts/clientHubFunctions.js"></script>
