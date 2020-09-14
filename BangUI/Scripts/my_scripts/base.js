@@ -2,7 +2,7 @@
 const myHub = new Hub($.connection.mainHub);
 const hand = new CardsOnTable("handDiv");
 const table = new CardsOnTable("tableDiv"); 
-const enemies = [];
+const enemyList = new enemies("enemyNames", "enemyDiv");
 const SALT = "theUser";
 
 
@@ -23,7 +23,13 @@ let addToLogged = function (str) {
 }
 */
 
+let setMainPage = function (i) {
+    enemyList.mainEnemyIndex = i;
+}
 
+let showMain = function(){
+    enemyList.showMain();
+}
 
 let setImage = function (cardType, elementId) {
     if (myHub.cardImages[cardType] === undefined) {
@@ -59,7 +65,6 @@ function sizeFy(size) {
     else if (document.getElementById("d1").clientWidth > size) {
         document.getElementById("d1").style.width = (document.getElementById("d1").clientWidth - 1) + "px";
     }
-    console.log("hello");
     sizeFy(size);
 
 
@@ -85,8 +90,7 @@ function chg2() {
         ev.preventDefault();
     }
 
-    function drag(ev) {
-        console.log("I drag now " + ev.target.id);
+function drag(ev) {
         DRAGED = ev.target.id;
         //ev.dataTransfer.setData("text", );
     }
@@ -105,8 +109,48 @@ function chg2() {
             .fail(function () { alert("it seems there is server problem") });
     }
 
+$.connection.hub.start({ waitForPageLoad: false })
+    .done(function () {
+        myHub.users.forEach(name => addToLogged(name));
+        myHub.userLogIn("give me thy name(alphanumeric shorter than 11 chars)");
+        var imageSrcs = ["bang", "missed", "KitCarlson", "ElGringo", "Joudonnais", "WillyTheKid"];
+        setupImages(imageSrcs);
+    })
+
+function setupImages(srcs) {
+    let img = new imageRequester();
+    let remaining = srcs.length;
+    for (var i = 0; i < srcs.length; i++) {
+        img.doneFuncion(function () {
+            --remaining;
+            if (remaining <= 0) {
+                siteSetup();
+            }
+        }
+        )
+        img.load(srcs[i])
+    }
+}
+
+function siteSetup() {
+
+    enemyList.addEnemy("gringo", "SHERIF", myHub.cardImages["ElGringo"], 3, 0, [], 5);
+    enemyList.addEnemy("kit", "RENEGATE", myHub.cardImages["KitCarlson"], 4, 0, [], 5);
+    enemyList.addEnemy("jou", "BANDIT", myHub.cardImages["Joudonnais"], 4, 1, [], 5);
+    enemyList.addEnemy("willy", "BANDIT", myHub.cardImages["WillyTheKid"], 4, 1, [], 5);
+    hand.addImageElement("lala", myHub.cardImages["bang"]);
+    enemyList.setUpEnemyPages();
+    enemyList.setUpNameButtons();
+    setImage("bang", "userImage");
+}
+// then to call it, you would use this
+
+
+
 window.onload = function () {
     window.addEventListener('resize', () => setTimeout(() => { hand.setUpCards(); }, 200));
+    window.addEventListener('resize', () => setTimeout(() => { enemyList.setButtonsToSize(); }, 200));
+    
     /*document.getElementById("discardPile").ondragover = function (event) {
         allowDrop(event);
     };
@@ -125,13 +169,3 @@ window.onload = function () {
 }
 
     
-$.connection.hub.start()
-    .done(function () {
-        myHub.users.forEach(name => addToLogged(name));
-        myHub.userLogIn("give me thy name(alphanumeric shorter than 11 chars)");
-        setImage("bang", "userImage");
-        console.log(myHub.cardImages["bang"]);
-        setTimeout(() => { hand.addImageElement("lala", myHub.cardImages["bang"]); }, 200);
-        ;
-    })
-    .fail(function () { alert("this doesn't seem to work"); });

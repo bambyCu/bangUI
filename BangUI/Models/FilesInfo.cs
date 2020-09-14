@@ -17,8 +17,18 @@ namespace BangUI.Models
         public readonly static string CardImages = Root + @"Models\Images\PlayCards";
         public static string CardTypeToPath(PlayCard c) =>
             CardImages + @"\" + c.ToString().ToLower() + ".png";
-        public static string CardTypeToPath(string c) =>
-            CardImages + @"\" + c.ToLower() + ".png";
+
+        public static string CardTypeToPath(Hero h) =>
+            HeroImages + @"\" + h.ToString().ToLower() + ".png";
+        public static string CardTypeToPath(string c)
+        {
+            if (Enum.IsDefined(typeof(Hero), c))
+            {
+                return HeroImages + @"\" + c.ToLower() + ".png"; ;
+            }
+            return CardImages + @"\" + c.ToLower() + ".png"; ;
+        }
+            
 
     }
 }
