@@ -1,35 +1,12 @@
 ﻿
 const myHub = new Hub($.connection.mainHub);
-const hand = new CardsOnTable("handDiv");
-const table = new CardsOnTable("tableDiv"); 
+const hand = new CardsOnTable("handDiv", (x) => {
+    makeElementPlayable(x); makeElementApplicableTo(x);
+});
+const table = new CardsOnTable("tableDiv", (x) => makeElementApplicableTo(x)); 
 const enemyList = new enemies("enemyNames", "enemyDiv");
+const myModal = new modalMaster("bangModal", "modalContent", "modalHeader");
 const SALT = "theUser";
-
-
-    
-let actAppl = function () {
-    let elem = document.getElementById($(this).attr('id'));
-    if (elem.classList.contains("active")) {
-        elem.classList.remove("active")
-    }
-    else {
-        elem.classList.add("active");
-    }
-};
-/*
-let addToLogged = function (str) {
-    $('#loggedList').append('<button id=\"' + SALT + str + '\" type=\"button\" class=\"list-group-item myBtn\">' + str + '</button>');
-    document.getElementById(SALT + str).addEventListener("click", actAppl);
-}
-*/
-
-let setMainPage = function (i) {
-    enemyList.mainEnemyIndex = i;
-}
-
-let showMain = function(){
-    enemyList.showMain();
-}
 
 let setImage = function (cardType, elementId) {
     if (myHub.cardImages[cardType] === undefined) {
@@ -44,76 +21,14 @@ let removeFromLogged = function (str) {
     document.getElementById(SALT + str).remove();
 }
 
-let addPhoto = function (parentId, newId, picture) {
-    var newImage = document.createElement("img");
-    newImage.id = newId;
-    
-    document.getElementById(parentId).appendChild(newImage);
-    setImage(picture, newId);
 
-}
-
-// DONE ----------------------------------------------------------------------------------------------------------------------------------------
-
-function sizeFy(size) {
-    if (document.getElementById("d1").clientWidth == size) {
-        return;
-    }
-    if (document.getElementById("d1").clientWidth < size) {
-        document.getElementById("d1").style.width = (document.getElementById("d1").clientWidth + 1) + "px";
-    }
-    else if (document.getElementById("d1").clientWidth > size) {
-        document.getElementById("d1").style.width = (document.getElementById("d1").clientWidth - 1) + "px";
-    }
-    sizeFy(size);
-
-
-}
-
-function chg() {
-    document.getElementById("d1").innerHTML = "Great Job!";
-    document.getElementById("d1").style.width = "600px";
-    document.getElementById("d1").style.height = "600px";
-    document.getElementById("d1").style.background = "green";
-}
-
-function chg2() {
-    document.getElementById("d1").innerHTML = "Hover Over Me!";
-    document.getElementById("d1").style.width = "230px";
-    document.getElementById("d1").style.height = "160px";
-    document.getElementById("d1").style.background = "red";
-}
-
-
-
-    function allowDrop(ev) {
-        ev.preventDefault();
-    }
-
-function drag(ev) {
-        DRAGED = ev.target.id;
-        //ev.dataTransfer.setData("text", );
-    }
-
-    function playCard(ev) {
-        ev.preventDefault();
-        myHub.server.applyGameIdCardTo(GAMEID, DRAGED, (ev.currentTarget.id).split("-")[1])
-            .done(function (val) {
-                if (val) {
-                    //document.getElementById(DRAGED).remove();
-                }
-                else {
-                    alert("incorrect use of card, or it is not yourturn");
-                }
-            })
-            .fail(function () { alert("it seems there is server problem") });
-    }
+// Setup functions ---------------------------------------------------------------------------------------------------------------------------------------
 
 $.connection.hub.start({ waitForPageLoad: false })
     .done(function () {
         myHub.users.forEach(name => addToLogged(name));
         myHub.userLogIn("give me thy name(alphanumeric shorter than 11 chars)");
-        var imageSrcs = ["bang", "missed", "KitCarlson", "ElGringo", "Joudonnais", "WillyTheKid"];
+        var imageSrcs = ["bang", "missed", "KitCarlson", "ElGringo", "Joudonnais", "WillyTheKid", "backOfCard"];
         setupImages(imageSrcs);
     })
 
@@ -133,39 +48,25 @@ function setupImages(srcs) {
 }
 
 function siteSetup() {
-
+    //------------------------temporary testing values -------------------------------
     enemyList.addEnemy("gringo", "SHERIF", myHub.cardImages["ElGringo"], 3, 0, [], 5);
     enemyList.addEnemy("kit", "RENEGATE", myHub.cardImages["KitCarlson"], 4, 0, [], 5);
     enemyList.addEnemy("jou", "BANDIT", myHub.cardImages["Joudonnais"], 4, 1, [], 5);
     enemyList.addEnemy("willy", "BANDIT", myHub.cardImages["WillyTheKid"], 4, 1, [], 5);
     hand.addImageElement("lala", myHub.cardImages["bang"]);
-    enemyList.setUpEnemyPages();
-    enemyList.setUpNameButtons();
-    setImage("bang", "userImage");
+    hand.addImageElement("secondLala", myHub.cardImages["missed"]);
+    //-----------------------seting up elements of site-----------------------
+    enemyList.setUpEnemyPages(); // set up enemies
+    enemyList.setUpNameButtons(); // set up way to get to enemy panels
+    makeElementByIdApplicableTo("pile"); // set up discard pile
+    makeElementByIdApplicableTo("userImage"); // for self applicable cards
+    myHub.userLogIn();
 }
-// then to call it, you would use this
-
-
 
 window.onload = function () {
     window.addEventListener('resize', () => setTimeout(() => { hand.setUpCards(); }, 200));
     window.addEventListener('resize', () => setTimeout(() => { enemyList.setButtonsToSize(); }, 200));
-    
-    /*document.getElementById("discardPile").ondragover = function (event) {
-        allowDrop(event);
-    };
-    document.getElementById("discardPile").ondrop = function (event) {
-        event.preventDefault();
-        myHub.server.discard(DRAGED)
-            .done(function () {
-                document.getElementById(DRAGED).remove();
-            })
-            .fail(function () { });
-    };
-    document.getElementById("btnEndTurn").addEventListener("click", function () {
-        myHub.server.endTurn();
-    })*/
-    //document.getElementById("gameStarter").onclick = function () { startGame(); };     
+    window.addEventListener('resize', () => setTimeout(() => { enemyList.enemyList.forEach( x =>x.table.setUpCards()); }, 200));  
 }
 
     

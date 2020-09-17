@@ -15,12 +15,14 @@
         div.appendChild(this.generateImage());
         div.appendChild(this.generateStatsTable());
         div.appendChild(this.generateCardsTable());
+        this.table = new CardsOnTable(this.idCardsOnTable, (x) => makeElementApplicableTo(x));
+        this.cardsOnTable.forEach(x => this.table.addImageElement(x.id, x.image));
         return div;
     }
 
     generateCardsTable() {
         let cards = document.createElement("div");
-        cards.id = this.username + "Table";
+        cards.id = this.idCardsOnTable;
         cards.classList.add("tableCards");
         return cards;
     }
@@ -29,8 +31,9 @@
         let div = document.createElement("div");
         let image = document.createElement("img");
         image.src = "data:image/png;base64," + this.image;
-        div.id = this.username + "image";
-        div.classList.add("heroImage");
+        image.id = this.idRoleImage;
+        div.classList.add("centeredCard");
+        makeElementApplicableTo(div);
         div.appendChild(image);
         return div;
     }
@@ -60,22 +63,30 @@
     }
 
     get idName() {
-        return this.username + "Name";
+        return this.username + "-name";
     }
 
     get idDistance() {
-        return this.username + "Distance";
+        return this.username + "-distance";
     }
 
     get idHealth() {
-        return this.username + "Health";
+        return this.username + "-health";
     }
 
     get idRole() {
-        return this.username + "Role";
+        return this.username + "-role";
     }
 
     get idCardsInHand() {
-        return this.username + "Hand";
+        return this.username + "-hand";
+    }
+
+    get idCardsOnTable() {
+        return this.username + "-cards"
+    }
+
+    get idRoleImage() {
+        return this.username + "-roleImage"
     }
 }

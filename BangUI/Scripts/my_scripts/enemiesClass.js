@@ -22,8 +22,14 @@
     setUpNameButtons() {
         let butts = document.getElementById(this.buttonsId);
         for (let i = 0; i < this.enemyList.length; i++) {
+            let temp = this.enemyList[i]
             let butt = this.createButton(this.getButtonId(i), this.enemyList[i].username);
-            butt.addEventListener("click", function () { setMainPage(i), showMain() }, false);
+            butt.addEventListener("click",
+                function () {
+                    setMainPage(i);
+                    showMain();
+                    temp.table.setUpCards();
+                }, false);
             butts.appendChild(butt);
         }
     }
@@ -54,6 +60,14 @@
     getButtonId(i) {
         return this.enemyList[i].username + "NameTag";
     }
+}
+
+let setMainPage = function (i) {
+    enemyList.mainEnemyIndex = i;
+}
+
+let showMain = function () {
+    enemyList.showMain();
 }
 
 

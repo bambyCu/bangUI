@@ -12,11 +12,11 @@
     waiter() {
         
         if (myHub.cardImages[this.image] != undefined) {
-            this.done();
+            setTimeout(() => (this.done()), 150);
             return;
         }
         if (myHub.cardImages[this.image] === undefined) {
-            setTimeout(() => (this.waiter()), 50);
+            setTimeout(() => (this.waiter()), 150);
         }
         
     }

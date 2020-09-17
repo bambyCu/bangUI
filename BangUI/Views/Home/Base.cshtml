@@ -7,8 +7,8 @@
 
     <div class="w-100 row p-0 m-0" style="height: 100vh;">
         <div class="w-100 h-100 col bg-info p-0">
-            <div id="userImage" class="heroImage">
-                <img src="~/Models/Images/Heroes/bartcassidy.png" alt="Max-width 100%">
+            <div class="centeredCard">
+                <img id="userImage" src="~/Models/Images/Heroes/bartcassidy.png" alt="Max-width 100%">
             </div>
             <table>
                 <tr>
@@ -20,47 +20,53 @@
                     <td id="heroRole">K</td>
                 </tr>
             </table>
-            <div id="handDiv" class="tableCards"></div>
-            <div id="tableDiv"></div>
+            <div id="handDiv"></div>
+            <div id="tableDiv" class="tableCards"></div>
         </div>
 
 
         <div class="h-100 col-4 bg-primary p-0">
-
+            <div id="pileDiv" class="centeredCard">
+                <img id="pile" src="~/Models/Images/PlayCards/catbalou.png">
+            </div>
+            <table>
+                <tr>
+                    <td>CARDS_IN_PILE:</td>
+                    <td id="pileAmount">0</td>
+                </tr>
+                <tr>
+                    <td>CARDS_IN_DECK:</td>
+                    <td id="deckAmount">0</td>
+                </tr>
+            </table>
+            <div id="messages">MESSAGES</div>
         </div>
 
 
         <div class="container h-100 col bg-info p-0">
             <div id="enemyDiv">
-
             </div>
             <div id="enemyNames">
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modalInvite" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div id="modalBody" class="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button id="invBtnYes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
-                    <button id="invBtnNo" type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-                </div>
-            </div>
-        </div>
+    <div id="bangModal" class="modal">
+        <div id="modalHeader"></div>
+        <div id="modalContent"></div>
     </div>
+
 
 
     <script src="~/Scripts/jquery.signalR-2.4.1.min.js"></script>
     <script src="~/signalr/js"></script>
+    <script src="~/Scripts/my_scripts/cardEventsFunctions.js"></script>
     <script src="~/Scripts/my_scripts/hubClass.js"></script>
     <script src="~/Scripts/my_scripts/myImage.js"></script>
     <script src="~/Scripts/my_scripts/enemyClass.js"></script>
     <script src="~/Scripts/my_scripts/enemiesClass.js"></script>
     <script src="~/Scripts/my_scripts/cardsOnTableClass.js"></script>
-
+    <script src="~/Scripts/my_scripts/modalMasterClass.js"></script>
     <script src="~/Scripts/my_scripts/clientHubFunctions.js"></script>
     <script src="~/Scripts/my_scripts/base.js"></script>
 

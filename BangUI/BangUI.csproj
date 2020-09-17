@@ -222,11 +222,13 @@
     <Content Include="Scripts\esm\popper-utils.min.js" />
     <Content Include="Scripts\esm\popper.js" />
     <Content Include="Scripts\esm\popper.min.js" />
+    <Content Include="Scripts\my_scripts\cardEventsFunctions.js" />
     <Content Include="Scripts\my_scripts\cardsOnTableClass.js" />
     <Content Include="Scripts\my_scripts\clientHubFunctions.js" />
     <Content Include="Scripts\my_scripts\enemiesClass.js" />
     <Content Include="Scripts\my_scripts\enemyClass.js" />
     <Content Include="Scripts\my_scripts\hubClass.js" />
+    <Content Include="Scripts\my_scripts\modalMasterClass.js" />
     <Content Include="Scripts\my_scripts\myImage.js" />
     <Compile Include="Startup1.cs" />
   </ItemGroup>

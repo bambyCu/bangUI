@@ -1,7 +1,7 @@
 ﻿class CardsOnTable {
-    constructor(idOfTableElement) {
-        this.table = idOfTableElement;
-        this.tableSpecs = document.getElementById(idOfTableElement).getBoundingClientRect();
+    constructor(idOfTableElement, massFunction) {
+        this.tableId = idOfTableElement;
+        this.inFunction = massFunction;
         this.cards = [];
         this.salt = "theCard";
     }
@@ -11,21 +11,22 @@
     addImageElement(id, byteArray) {
         let newImage = document.createElement("img");
         this.cards.push(id);
-        document.getElementById(this.table).appendChild(newImage);
+        document.getElementById(this.tableId).appendChild(newImage);
         newImage.id = id;
         newImage.style.width = this.cardWidth + "px";
         newImage.style.height = this.cardHeight + "px";
         newImage.style.position = "absolute";
-        /*newImage.addEventListener("mouseover", function (event) {
-            console.log(event.target);
-            event.target.style.bottom = event.target.height + "px";
-        }, false);
-        newImage.addEventListener("mouseout", function (event) {
-            console.log(event.target);
-            event.target.style.bottom = 0 + "px";
-        }, false);*/
+        this.inFunction(newImage);
         document.getElementById(id).src = "data:image/png;base64," + byteArray;
-        this.setUpCards(id);
+        this.setUpCards();
+    }
+
+    addEventListenerToCards(ev, funct) {
+        this.cards.forEach(x => this.addEventListenerToCard(x, ev, funct));
+    }
+
+    addEventListenerToCard(id, ev, funct) {
+        document.getElementById(id).addEventListener(ev, funct);
     }
 
     removeCard(id) {
@@ -37,13 +38,12 @@
         this.setUpCards();
     }
 
-    showCard(cardId) {
-        document.getElementById(cardId).style.bottom = this.cardHeight + "px";
-        //this.cards.forEach(x => document.getElementById(x).style.marginBottom = (x == cardId) ? "100%" : "");
-    }
-
     setUpCards() {
-        this.tableSpecs = document.getElementById(this.table).getBoundingClientRect();
+        let tableElem = document.getElementById(this.tableId);
+        if (tableElem === undefined) {
+            return;
+        }
+        this.tableSpecs = tableElem.getBoundingClientRect();
         let cardMargin = 100 / (this.cards.length + 1);
         let cardSize = this.cardWidth / this.tableSpecs.width * 100 / 2;
         if (cardMargin < cardSize)
@@ -53,7 +53,10 @@
                 document.getElementById(this.cards[i]).style.marginLeft = 0;
                 continue;
             }
-            document.getElementById(this.cards[i]).style.marginLeft = (cardMargin * (i + 1)) - cardSize + "%";
+            let currCard = document.getElementById(this.cards[i])
+            currCard.style.width = this.cardWidth + "px";
+            currCard.style.height = this.cardHeight + "px";
+            currCard.style.marginLeft = (cardMargin * (i + 1)) - cardSize + "%";
         }
         
     }
@@ -67,10 +70,10 @@
     }
 
     get cardWidth() {
-        return (document.getElementById(this.table).clientHeight * 25 / 39);
+        return (document.getElementById(this.tableId).clientHeight * 25 / 39);
     }
 
     get cardHeight() {
-        return document.getElementById(this.table).clientHeight;
+        return document.getElementById(this.tableId).clientHeight;
     }
 }

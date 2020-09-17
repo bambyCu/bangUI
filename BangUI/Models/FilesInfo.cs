@@ -12,7 +12,7 @@ namespace BangUI.Models
     {
         private static string Root = Path.Combine(AppContext.BaseDirectory, "");
         public readonly static string BasicPlayCards = Root + @"Models\Decks\PlayCards.txt";
-        public readonly static string BasicHeroes = Root + @"Models\Decks/\HeroCards.txt";
+        public readonly static string BasicHeroes = Root + @"Models\Decks\HeroCards.txt";
         public readonly static string HeroImages = Root + @"Models\Images\Heroes";
         public readonly static string CardImages = Root + @"Models\Images\PlayCards";
         public static string CardTypeToPath(PlayCard c) =>
@@ -22,6 +22,10 @@ namespace BangUI.Models
             HeroImages + @"\" + h.ToString().ToLower() + ".png";
         public static string CardTypeToPath(string c)
         {
+            if (c.ToLower().Trim() == "backofcard")
+            {
+                return Root + @"Models\Images\backOfCard.jpg";
+            }
             if (Enum.IsDefined(typeof(Hero), c))
             {
                 return HeroImages + @"\" + c.ToLower() + ".png"; ;
