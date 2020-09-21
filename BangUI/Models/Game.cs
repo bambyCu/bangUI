@@ -69,7 +69,6 @@ namespace BangGame
                     distance++;
                 }
             }
-            return distance;
         }
         public void NewRound()
         {
@@ -136,7 +135,7 @@ namespace BangGame
             return null;
         }
 
-        public void applyCard(Card card, Player victim)
+        public void ApplyCard(Card card, Player victim)
         {
             if (card.Type == PlayCard.Missed)
             {

@@ -1,12 +1,19 @@
 ﻿
-const myHub = new Hub($.connection.mainHub);
+const myHub = new Hub($.connection.mainHub,
+    new modalMaster("login-modal", "login-modal-content", "login-modal-header"),//needs to be set up in window.onload
+    new modalMaster("users-modal", "users-modal-content", "users-modal-header"),//needs to be set up in window.onload
+    new modalMaster("invite-modal", "invite-modal-content", "invite-modal-header")//needs to be set up in window.onload
+);
 const hand = new CardsOnTable("handDiv", (x) => {
     makeElementPlayable(x); makeElementApplicableTo(x);
 });
 const table = new CardsOnTable("tableDiv", (x) => makeElementApplicableTo(x)); 
 const enemyList = new enemies("enemyNames", "enemyDiv");
 const myModal = new modalMaster("bangModal", "modalContent", "modalHeader");
-const SALT = "theUser";
+
+
+
+
 
 let setImage = function (cardType, elementId) {
     if (myHub.cardImages[cardType] === undefined) {
@@ -17,20 +24,8 @@ let setImage = function (cardType, elementId) {
     document.getElementById(elementId).src = "data:image/png;base64," + myHub.cardImages[cardType];
 }
 
-let removeFromLogged = function (str) {
-    document.getElementById(SALT + str).remove();
-}
-
-
 // Setup functions ---------------------------------------------------------------------------------------------------------------------------------------
 
-$.connection.hub.start({ waitForPageLoad: false })
-    .done(function () {
-        myHub.users.forEach(name => addToLogged(name));
-        myHub.userLogIn("give me thy name(alphanumeric shorter than 11 chars)");
-        var imageSrcs = ["bang", "missed", "KitCarlson", "ElGringo", "Joudonnais", "WillyTheKid", "backOfCard"];
-        setupImages(imageSrcs);
-    })
 
 function setupImages(srcs) {
     let img = new imageRequester();
@@ -47,6 +42,13 @@ function setupImages(srcs) {
     }
 }
 
+function createElement(elementType, id, text) {
+    let butt = document.createElement(elementType);
+    butt.id = id;
+    butt.innerText = text;
+    return butt;
+}
+
 function siteSetup() {
     //------------------------temporary testing values -------------------------------
     enemyList.addEnemy("gringo", "SHERIF", myHub.cardImages["ElGringo"], 3, 0, [], 5);
@@ -60,10 +62,14 @@ function siteSetup() {
     enemyList.setUpNameButtons(); // set up way to get to enemy panels
     makeElementByIdApplicableTo("pile"); // set up discard pile
     makeElementByIdApplicableTo("userImage"); // for self applicable cards
-    myHub.userLogIn();
+    
 }
 
 window.onload = function () {
+    document.getElementsByTagName("BODY")[0].appendChild(myHub.logInModal.generateModal());
+    document.getElementsByTagName("BODY")[0].appendChild(myHub.onlineUsersModal.generateModal());
+    document.getElementsByTagName("BODY")[0].appendChild(myHub.inviteModal.generateModal());
+    myHub.userLogIn();
     window.addEventListener('resize', () => setTimeout(() => { hand.setUpCards(); }, 200));
     window.addEventListener('resize', () => setTimeout(() => { enemyList.setButtonsToSize(); }, 200));
     window.addEventListener('resize', () => setTimeout(() => { enemyList.enemyList.forEach( x =>x.table.setUpCards()); }, 200));  

@@ -18,7 +18,6 @@ namespace SignalRTutorial
     public class MyHub : Hub
     {
         //Username -> ConnectionId
-        private string GroupId = "";
         private readonly static SortedDictionary<string, string> UsersToConnections =
             new SortedDictionary<string, string>();
         //ConnectionId -> Username
@@ -32,7 +31,7 @@ namespace SignalRTutorial
         private readonly static SortedDictionary<string, GameWrapper> CurrGames =
             new SortedDictionary<string, GameWrapper>();
 
-        //GameID -> (userName, InvitationAccepted)
+        //ConnectionId -> (userName, InvitationAccepted)
         private static SortedDictionary<string, List<(string, bool)>> GroupApprove =
             new SortedDictionary<string, List<(string, bool)>>();
 
@@ -43,7 +42,7 @@ namespace SignalRTutorial
                 lock (UsersToConnections)
                 {
                     if (!UsersToConnections.ContainsKey(Context.ConnectionId))
-                        return "haaaaaaa";
+                        return "I have no name";
                     return UsersToConnections[Context.ConnectionId];
                 } 
             }
@@ -57,6 +56,13 @@ namespace SignalRTutorial
             }
         }
 
+        public string[] GetUsers()
+        {
+            lock (UsersToConnections)
+            {
+                return UsersToConnections.Keys.ToArray();
+            }
+        }
 
         private byte[] ImageTo64(string src)
         {
@@ -67,15 +73,7 @@ namespace SignalRTutorial
             return (byte[])converter.ConvertTo(image, typeof(byte[]));
         }
 
-        private void SendHandCards(Player p)
-        {
-            var playCards = p.Hand.Select(
-                x => new { image = ImageTo64(FilesInfo.CardTypeToPath(x.Type)), id = x.Id });
-            lock (UsersToConnections)
-            {
-                Clients.Client(UsersToConnections[p.Name]).AddHandCards(playCards.ToArray());
-            }
-        }
+        
 
         public byte[] TypeImageByteStream(string type)
         {
@@ -83,6 +81,68 @@ namespace SignalRTutorial
                 return null;
             return ImageTo64(FilesInfo.CardTypeToPath(type));
         }
+
+        public string LogIn(string userName)
+        {
+            //name must be alphanumeric and shorter than 11 chars
+            if (userName == null || userName.Length > 10 || userName.Length == 0 || userName.Any(x => !Char.IsLetterOrDigit(x)))
+                return "incorrect";
+            lock (UsersToConnections)
+            {
+                if (UsersToConnections.Keys.Contains(userName)) { return "taken"; }
+                UsersToConnections.Add(userName, Context.ConnectionId);
+            }
+            Clients.All.LogIn(userName);
+            return "correct";
+        }
+
+        public bool GameInvitation(String[] users)
+        {
+            if (!users.Any())
+                return false;
+            lock (BussyUsers)
+            {
+                if (BussyUsers.Any(x => users.Contains(x)))
+                    return false;
+            }
+            lock (GroupApprove)
+            {
+                var playerList = users.Select(x => (x, false)).ToList();
+                users.ForEach(x => GroupApprove.Add(x, playerList));
+            }
+            lock (UsersToConnections)
+            {
+                users.ForEach(x => Clients.Client(UsersToConnections[x]).Invitation(users));
+            }
+            return true;
+        }
+
+        public bool Mess(string text)
+        {
+            Clients.All.AddMessage(text.ToCharArray());
+            return true;
+        }
+
+        public void invitationAnsver(bool ansver)
+        {
+            if (!ansver)
+                retractGameInvitations();
+            GroupApprove[Name].Find(x => x.Item1 == Name).IfNotNull(x => x.Item2 = true);
+            if (GroupApprove[Name].All(x => x.Item2 == true))
+                startGameWithPlayers(GroupApprove[Name].Select(x => x.Item1).ToList());
+        }
+
+        public void startGameWithPlayers(List<string> players)
+        {
+            Clients.All.AddMessage("game has been excepted by all");
+        }
+
+        public void retractGameInvitations()
+        {
+            Clients.All.AddMessage("game has been rejected by " + Name);
+        }
+        //------------------------------------------------------------- DONE FUNCTIONS ARE UP -------------------------------------------------------------
+
         /*
         private void UpdateGame(string gameId)
         {
@@ -112,19 +172,11 @@ namespace SignalRTutorial
             }
         }*/
 
-        public string LogIn(string userName)
-        {
-            //name must be alphanumeric and shorter than 11 chars
-            if (userName == null || userName.Length > 10 || userName.Length == 0 || userName.Any(x => !Char.IsLetterOrDigit(x)))
-                return "incorrect";
-            lock (UsersToConnections)
-            {
-                if (UsersToConnections.Keys.Contains(userName)) { return "taken"; }
-                UsersToConnections.Add(userName, Context.ConnectionId);
-            }
-            Clients.All.LogIn(userName);
-            return "correct";
-        }
+
+
+
+
+
 
         public override Task OnDisconnected(bool stopCalled)
         {
@@ -226,39 +278,10 @@ namespace SignalRTutorial
                 }
             }
         }*/
-        public string[] GetUsers()
-        {
-            lock (UsersToConnections)
-            {
-                return UsersToConnections.Keys.ToArray();
-            }
-        }
 
-        public bool GameInvitation(String[] users)
-        {
-            if (!users.Any()) 
-            { 
-                return false; 
-            }
-            lock (BussyUsers)
-            {
-                if (BussyUsers.Any(x => users.Contains(x)))
-                    return false;
-                //BussyUsers.UnionWith(users.ToHashSet());
-            }
-            lock (GroupApprove)
-            {
-                var playerList = users.Select(x => (x, false)).ToList();
-                users.ForEach(x => GroupApprove.Add(x, playerList));
-            }
-            lock (UsersToConnections)
-            {
-                users
-                    .ForEach(x => Clients.Client(UsersToConnections[x]).Invitation(users));
-            }
-            return true;
-        }
 
+
+        /*
         public void GetInVal(string GroupName, bool Decision) 
         {
             if (!GroupApprove.ContainsKey(GroupName))
@@ -300,7 +323,6 @@ namespace SignalRTutorial
                                     Clients.Client(UsersToConnections[i.Name]).SetHealth(i.Health);
                                     Clients.Client(UsersToConnections[i.Name]).SetRole(i.RoleType.ToString());
                                 }
-                                SendHandCards(i);
                                 var enemyPlayers = new List<(string, int, string)>();
                                 foreach ( var j in p)
                                 {
@@ -385,6 +407,6 @@ namespace SignalRTutorial
             Clients
                 .Client(Context.ConnectionId)
                 .SetGameView(tempImage, name, player.HeroType.ToString(), player.Health, images,player.Hand.Count);
-        }
+        }*/
     }
 }

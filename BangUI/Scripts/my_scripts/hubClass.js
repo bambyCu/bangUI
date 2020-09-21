@@ -1,73 +1,79 @@
 ﻿class Hub{
-    constructor(hub){
+    constructor(hub, logInModal, onlineUsersModal, inviteModal){
         this.hub = hub;
         this.cardImages = {}
+        this.logInModal = logInModal;
+        this.onlineUsersModal = onlineUsersModal;
+        this.inviteModal = inviteModal;
     }
 
+    //this.hub.server.getUsers()
 
-    get users() {
-        var papa = [];
-        this.hub.server.getUsers()
-            .done(function (data) {
-                console.log("dfsdfdsfs")
-                data.forEach(x => papa.push(x));
-            })
-        console.log(papa);
-        return papa;
-    }
-
-    makeButton(id, text) {
-        let butt = document.createElement("button");
-        butt.id = id;
-        butt.innerText = text;
-        butt.addEventListener("click", function (ev) {
-            if (ev.target.classList.contains("active"))
-                ev.target.classList.remove("active")
-            else
-                ev.target.classList.add("active")
-        })
-        return butt;
-    }
+    
 
     seeLoged() {
-        console.log("lapis ",this.users);
-        myModal.showModal();
+        this.onlineUsersModal.showModal();
         let names = document.createElement("div");
         names.id = "loggend-names";
-        let that = this;
-        console.log("dddddx", this.users, this.users.length)
-        this.users.forEach(x => console.log(x));
-        this.users.forEach(x => {  names.appendChild(that.makeButton(x, x))});
-        myModal.contentSet = names;
+        this.hub.server.getUsers()
+            .done(function (data) {
+                data.forEach(x => {
+                    let tempButton = createElement("button", x, x);
+                    tempButton.addEventListener("click", function (ev) {
+                        if (ev.target.classList.contains("active"))
+                            ev.target.classList.remove("active");
+                        else
+                            ev.target.classList.add("active");
+                    });
+                    names.appendChild(tempButton)
+                });
+            }
+        );
+        let startButton = createElement("button", "start-game", "start game", [])
+        const that = this;
+        startButton.addEventListener("click",
+            () => {
+                let names = [...document.getElementsByClassName("active")].map(x => x.id);
+                that.hub.server.gameInvitation(names).done(function (input) {
+                    if (!input) {
+                        console.log("not permited action");
+                    }
+                    console.log("invitation request notices", input);
+                })
+            });
+        startButton.style.position = "absolute";
+        startButton.style.bottom = 0;
+        startButton.style.left = 0;
+        names.appendChild(startButton);
+        this.onlineUsersModal.contentSet = names;
     }
 
 
     userLogIn() {
-        myModal.headerText = "you need to login";
-        myModal.contentInner =
+
+        this.logInModal.contentInner =
             '<form id="farm" name="myForm" onsubmit="return false;" method="post">' + 
-                'Name: <input type="text" name="fname">' +
+                'Name: <input id="loginText" type="text" name="fname">' +
                     '<input type="submit" value="Submit">'+
             '</form>'
-
+        this.logInModal.headerText = "you need to login";
+        document.getElementById("loginText").focus();
+        document.getElementById("loginText").select();
         let inLog = document.getElementById("farm");
         let that = this;
-        myModal.showModal();
+        this.logInModal.showModal();
         inLog.addEventListener("submit",
             function () {
                 let login = document.forms["myForm"]["fname"].value;
-
                 that.hub.server.logIn(login)
                     .done(
                         //return values are "correct", "incorrect", "taken"adf
                         function (val) {
                             if (val != "correct") {
-                                console.log("name", login, "has not been selected");
-                                myModal.headerText = (login + " is " + val);
+                                that.logInModal.headerText = (login + " is " + val);
                                 return false;
                             }
-                            console.log("name", login, "has been selected");
-                            myModal.hideModal();
+                            that.logInModal.hideModal();
                             that.seeLoged();
                             return false;
                         })
@@ -76,12 +82,6 @@
             });
         
     }
-
-
-    
-
-    
-
 
 
     requestImage(typeImage) {
@@ -107,18 +107,6 @@
                     console.log('game invitations have been sent');
                 }
             });
-    }
-
-    inviteRefuse(group) {
-        myHub.server.getInVal(group, false).done(function () {
-            console.log("invitation has not been accepted");
-        });
-    }
-
-    inviteAccept(group) {
-        myHub.server.getInVal(group, true).done(function () {
-            console.log("invitation has  been accepted");
-        });
     }
 
 }

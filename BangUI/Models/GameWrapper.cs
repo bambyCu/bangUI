@@ -33,7 +33,7 @@ namespace BangUI.Models
         public void DiscardCard(string player, int id) =>
             BangGame.DiscardCard(player, id);
 
-        public void nextTurn()
+        public void NextTurn()
         {
             BangGame.NewRound();
             if (CurrentPlayer.HasOnTable(PlayCard.Dynamite) &&  
@@ -42,7 +42,7 @@ namespace BangUI.Models
                 CurrentPlayer.TakeDamage(3);
                 if (!CurrentPlayer.IsAlive)
                 {
-                    nextTurn();
+                    NextTurn();
                     //give all cards to vulcher
                     return;
                 }
@@ -50,22 +50,22 @@ namespace BangUI.Models
             if (CurrentPlayer.HasOnTable(PlayCard.Prison) &&
                 DrawForEffect(x => x.Color != CardColor.heart))
             {
-                nextTurn();
+                NextTurn();
                 return;
             }
             StartPhaseOne();
         }
         
 
-        public void applyCard(string applicator, int card, string victim)
+        public void ApplyCard(string applicator, int card, string victim)
         {
             var apInstance = BangGame.Players.Find(x => x.Name == applicator);
             var vicInstance = BangGame.Players.Find(x => x.Name == victim);
             var cardInstance = apInstance.Hand.Find(x => x.Id == card);
             if (apInstance == CurrentPlayer)
-                applyCard(apInstance, cardInstance, vicInstance);
+                ApplyCard(apInstance, cardInstance, vicInstance);
         }
-        public void applyCard(Player attacker, Card card, Player victim)
+        public void ApplyCard(Player attacker, Card card, Player victim)
         {
             if (!victim.IsAlive || !attacker.IsAlive)
                 //TODO
@@ -74,7 +74,7 @@ namespace BangUI.Models
             //if(card.Type == Miss)
             if ( !CardInfo.IsAttackCard(card))
             {
-                BangGame.applyCard(card, victim);
+                BangGame.ApplyCard(card, victim);
             }
             switch (card.Type)
             {
@@ -107,7 +107,7 @@ namespace BangUI.Models
             }
         }
 
-        public Player getPlayer(string name) =>
+        public Player GetPlayer(string name) =>
             BangGame.Players.Find(x => x.Name == name);
 
     }

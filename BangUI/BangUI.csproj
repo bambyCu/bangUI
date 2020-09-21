@@ -225,9 +225,11 @@
     <Content Include="Scripts\my_scripts\cardEventsFunctions.js" />
     <Content Include="Scripts\my_scripts\cardsOnTableClass.js" />
     <Content Include="Scripts\my_scripts\clientHubFunctions.js" />
+    <Content Include="Scripts\my_scripts\connectionStart.js" />
     <Content Include="Scripts\my_scripts\enemiesClass.js" />
     <Content Include="Scripts\my_scripts\enemyClass.js" />
     <Content Include="Scripts\my_scripts\hubClass.js" />
+    <Content Include="Scripts\my_scripts\loginManager.js" />
     <Content Include="Scripts\my_scripts\modalMasterClass.js" />
     <Content Include="Scripts\my_scripts\myImage.js" />
     <Compile Include="Startup1.cs" />
@@ -263,7 +265,6 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Scripts\p5.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
