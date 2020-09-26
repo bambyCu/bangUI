@@ -145,18 +145,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AttackManager.cs" />
-    <Compile Include="Models\BangEnum\CardColor.cs" />
-    <Compile Include="Models\BangEnum\Hero.cs" />
-    <Compile Include="Models\BangEnum\PlayCard.cs" />
-    <Compile Include="Models\BangEnum\Role.cs" />
-    <Compile Include="Models\Card.cs" />
-    <Compile Include="Models\CardInfo.cs" />
-    <Compile Include="Models\Deck.cs" />
     <Compile Include="Models\FilesInfo.cs" />
-    <Compile Include="Models\Game.cs" />
-    <Compile Include="Models\GameWrapper.cs" />
-    <Compile Include="Models\Player.cs" />
     <Compile Include="MyHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Content\bootstrap-grid.css" />
@@ -211,8 +200,6 @@
     <Content Include="Models\Images\roles\rinnegato.png" />
     <Content Include="Models\Images\roles\sceriffo.png" />
     <Content Include="Models\Images\roles\vice.png" />
-    <Content Include="Models\Decks\HeroCards.txt" />
-    <Content Include="Models\Decks\PlayingCards.txt" />
     <Content Include="Scripts\my_scripts\base.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -315,6 +302,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BangGameLibrary\BangGameLibrary\BangGameLibrary.csproj">
+      <Project>{6da3edd1-9a79-49fd-8428-4be75b0a988d}</Project>
+      <Name>BangGameLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

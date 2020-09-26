@@ -5,7 +5,7 @@ using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using System.Threading.Tasks;
-using BangGame;
+using BangGameLibrary;
 using System.Drawing;
 using System.IO;
 using System.Web.ModelBinding;
@@ -28,8 +28,8 @@ namespace SignalRTutorial
              new HashSet<string>();
 
         //name -> Game
-        private readonly static SortedDictionary<string, GameWrapper> CurrGames =
-            new SortedDictionary<string, GameWrapper>();
+        private readonly static SortedDictionary<string, BangGame> CurrGames =
+            new SortedDictionary<string, BangGame>();
 
         //ConnectionId -> (userName, InvitationAccepted)
         private static SortedDictionary<string, List<(string, bool)>> GroupApprove =
@@ -48,7 +48,7 @@ namespace SignalRTutorial
             }
         }
 
-        private GameWrapper Game()
+        private BangGame MyGame()
         {
             lock (CurrGames)
             {
