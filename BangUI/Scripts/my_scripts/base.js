@@ -51,15 +51,15 @@ function createElement(elementType, id, text) {
 
 function siteSetup() {
     //------------------------temporary testing values -------------------------------
-    enemyList.addEnemy("gringo", "SHERIF", myHub.cardImages["ElGringo"], 3, 0, [], 5);
-    enemyList.addEnemy("kit", "RENEGATE", myHub.cardImages["KitCarlson"], 4, 0, [], 5);
-    enemyList.addEnemy("jou", "BANDIT", myHub.cardImages["Joudonnais"], 4, 1, [], 5);
-    enemyList.addEnemy("willy", "BANDIT", myHub.cardImages["WillyTheKid"], 4, 1, [], 5);
-    hand.addImageElement("lala", myHub.cardImages["bang"]);
-    hand.addImageElement("secondLala", myHub.cardImages["missed"]);
+    //enemyList.addEnemy("gringo", "SHERIF", myHub.cardImages["ElGringo"], 3, 0, [], 5);
+    //enemyList.addEnemy("kit", "RENEGATE", myHub.cardImages["KitCarlson"], 4, 0, [], 5);
+    //enemyList.addEnemy("jou", "BANDIT", myHub.cardImages["Joudonnais"], 4, 1, [], 5);
+   // enemyList.addEnemy("willy", "BANDIT", myHub.cardImages["WillyTheKid"], 4, 1, [], 5);
+    //hand.addImageElement("lala", myHub.cardImages["bang"]);
+    //hand.addImageElement("secondLala", myHub.cardImages["missed"]);
     //-----------------------seting up elements of site-----------------------
-    enemyList.setUpEnemyPages(); // set up enemies
-    enemyList.setUpNameButtons(); // set up way to get to enemy panels
+    //enemyList.setUpEnemyPages(); // set up enemies
+    //enemyList.setUpNameButtons(); // set up way to get to enemy panels
     makeElementByIdApplicableTo("pile"); // set up discard pile
     makeElementByIdApplicableTo("userImage"); // for self applicable cards
     

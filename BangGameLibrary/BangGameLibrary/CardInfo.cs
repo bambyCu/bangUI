@@ -16,11 +16,10 @@ namespace BangGameLibrary
                 if (availableCards == null)
                 {
                     //(StreamReader sr = new StreamReader(Path.Combine(AppContext.BaseDirectory, "") + @"Models\Decks\PlayingCards.txt"))
-                    using (StreamReader sr = new StreamReader(FilesInfo.BasicPlayCards))
-                    {
-                        string line = sr.ReadToEnd();
-                        availableCards = JsonConvert.DeserializeObject<Card[]>(line).ToList();
-                    }
+                    string line = Properties.Resources.PlayingCards;
+                    availableCards = JsonConvert.DeserializeObject<Card[]>(line).ToList();
+                    for (int i = 0; i < availableCards.Count; i++)
+                        availableCards[i].Id = i;
                 }
                 return availableCards;
             }    
@@ -32,14 +31,11 @@ namespace BangGameLibrary
             {
                 if(heroVals == null)
                 {
-                    using (StreamReader sr = new StreamReader(FilesInfo.BasicHeroes))
-                    {
-                        string line = sr.ReadToEnd();
-                        heroVals =
-                            JsonConvert.DeserializeAnonymousType(line, new[] { new { Hero = "", DistanceFromOthers = "", SeeingDistance = "", SeeingAttackDistance = "", MaxHealth = "" } })
-                                .Select(x => new Player(x.Hero, Int32.Parse(x.DistanceFromOthers), Int32.Parse(x.SeeingDistance), Int32.Parse(x.SeeingAttackDistance), Int32.Parse(x.MaxHealth)))
-                                .ToList();
-                    }
+                    string line = Properties.Resources.HeroCards;
+                    heroVals =
+                        JsonConvert.DeserializeAnonymousType(line, new[] { new { Hero = "", DistanceFromOthers = "", SeeingDistance = "", SeeingAttackDistance = "", MaxHealth = "" } })
+                            .Select(x => new Player(x.Hero, Int32.Parse(x.DistanceFromOthers), Int32.Parse(x.SeeingDistance), Int32.Parse(x.SeeingAttackDistance), Int32.Parse(x.MaxHealth)))
+                            .ToList();
                 }
                 return heroVals;
             }

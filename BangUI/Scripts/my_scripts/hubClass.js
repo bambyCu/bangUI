@@ -109,5 +109,11 @@
             });
     }
 
+    gameStarter() {
+        myHub.server.newGameSetUp()
+            .done(function (val ) {
+            });
+    }
+
 }
 

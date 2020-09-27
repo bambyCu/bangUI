@@ -304,8 +304,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BangGameLibrary\BangGameLibrary\BangGameLibrary.csproj">
-      <Project>{6da3edd1-9a79-49fd-8428-4be75b0a988d}</Project>
+    <ProjectReference Include="..\BangGameLibrary\BangGameLibrary\BangGameLibrary.csproj">
+      <Project>{3547541b-71c3-4546-8f94-23f85944a0bf}</Project>
       <Name>BangGameLibrary</Name>
     </ProjectReference>
   </ItemGroup>

@@ -174,7 +174,54 @@ namespace SignalRTutorial
 
 
 
-
+        public void NewGameSetUp(string [] names)
+        {
+            /*
+             * to do use this aproach instead of current, current is very inefficient, want to make it work today 
+             * var gameInfo = game
+                .Players
+                .Select(x => new Dictionary<string, Dictionary<string, object>> 
+                { 
+                    {
+                        x.Name ,new Dictionary<string, object>()
+                        {
+                            {"Health", x.Health },
+                            {"HeroType", x.HeroType.ToString() },
+                            {"RoleType", x.RoleType.ToString() },
+                            {"HandSize", x.Hand.Count },
+                            {"Distance", 0 },
+                            {"CardsOnTable", x.CardsOnTable },
+                        } 
+                    }
+                });
+            */
+            var game = new BangGame(names.ToList());
+            var gameInfo = game
+                .Players
+                .Select(x => new {  Health = x.Health, HeroType = x.HeroType.ToString(), Name = x.Name, RoleType = x.RoleType.ToString(), HandSize = x.Hand.Count, Distance = 0,
+                    CardsOnTable = x.CardsOnTable.Select(y => new { ImageName = y.Type.ToString(), Id = y.Id }) });
+            foreach(var i in game.Players)
+            {
+                //very inefficient rewrite
+                gameInfo = game
+                .Players
+                .Where(x => x != i)
+                .Select(x => new {
+                    Health = x.Health,
+                    HeroType = x.HeroType.ToString(),
+                    Name = x.Name,
+                    RoleType = (x.RoleType == Role.Sherif) ? "Sherif" : "?",
+                    HandSize = x.Hand.Count,
+                    Distance = game.Distance(i, x),
+                    CardsOnTable = x.CardsOnTable.Select(y => new { ImageName = y.Type.ToString(), Id = y.Id })
+                });
+                if (UsersToConnections.Keys.Contains(i.Name))
+                {
+                    Clients.Client(UsersToConnections[i.Name]).beginGameInfo(gameInfo);
+                    Clients.Client(UsersToConnections[i.Name]).setMeUp(new { Hand = i.Hand.Select(x => new { Id = x.Id, CardType = x.Type.ToString() }), Health = i.Health, RoleType = i.RoleType.ToString(), Name = i.Name, HeroType = i.HeroType.ToString() });
+                }
+            }
+        }
 
 
 

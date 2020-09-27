@@ -23,4 +23,32 @@ $.connection.mainHub.client.addHandCards = function (listImageId) {
         myHub.client.addHandCard(listImageId[i].Item1, listImageId[i].Item2);
     }
 }
+let cici = 0;
+
+
+$.connection.mainHub.client.beginGameInfo = function (listImageId) {
+    //listImage [(image, string)]
+    console.log(listImageId);
+    cici = listImageId;
+    myHub.inviteModal.hideModal();
+    myHub.onlineUsersModal.hideModal();
+    myHub.logInModal.hideModal();
+    
+    listImageId.forEach(x => {
+        enemyList.addEnemy(x.Name, x.RoleType, myHub.cardImages[x.HeroType], x.Health, x.Distance, [], x.HandSize);
+        console.log(x.HeroType);
+    })
+    enemyList.setUpEnemyPages();
+    enemyList.setUpNameButtons();
+    
+}
+
+$.connection.mainHub.client.setMeUp = function (myInfo) {
+    myInfo.Hand.forEach(x => hand.addImageElement(x.Id, myHub.cardImages[x.CardType]));
+    document.getElementById("userImage").src = "data:image/png;base64," + myHub.cardImages[myInfo.HeroType];
+    document.getElementById("heroHealth").innerText = myInfo.Health;
+    document.getElementById("heroRole").innerText = myInfo.RoleType;
+    document.getElementById("heroName").innerText = myInfo.Name;
+}
+
 
