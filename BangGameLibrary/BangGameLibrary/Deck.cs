@@ -6,8 +6,8 @@ namespace BangGameLibrary
 {
     internal class Deck
     {
-        private List<Card> CardsInDeck = new List<Card>();
-        private List<Card> CardsInPile = new List<Card>();
+        private readonly List<Card> CardsInDeck = new List<Card>();
+        private readonly List<Card> CardsInPile = new List<Card>();
         public event EventHandler OnDraw;
         public event EventHandler OnMixPiles;
         public event EventHandler OnCardAddedToPile;
@@ -71,6 +71,13 @@ namespace BangGameLibrary
             OnCardAddedToPile?.Invoke(this, EventArgs.Empty);
             if (c != null)
                 CardsInPile.Add(c);
+        }
+
+        public void CardsToPile(IEnumerable<Card> c)
+        {
+            OnCardAddedToPile?.Invoke(this, EventArgs.Empty);
+            if (c != null)
+                CardsInPile.AddRange(c);
         }
 
         public Card TopOfPile()

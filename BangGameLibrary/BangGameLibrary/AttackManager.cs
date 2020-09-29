@@ -6,26 +6,26 @@ namespace BangGameLibrary
 {
     internal class AttackManager
     {
-        public Dictionary<int,List<(Player,PlayCard)>> WaitingVictims = new Dictionary<int, List<(Player, PlayCard)>>();
+        public Dictionary<int,List<(Player,PlayCard, Player)>> WaitingVictims = new Dictionary<int, List<(Player, PlayCard, Player)>>();
         private int CurrentAttackNum = 0;
         public bool ReadyToAttack { get; private set; }
-        private int WaitTime = 3000;
+        private readonly int WaitTime = 3000;
 
         public AttackManager()
         {
             ReadyToAttack = true;
         }
-        public bool Damage(Player victim, PlayCard card) => Damage((new Player[] { victim }).ToList(), card);
+        public bool Damage(Player victim, PlayCard card, Player enemy) => Damage((new Player[] { victim }).ToList(), card, enemy);
 
-        public bool Damage(List<Player> victims, PlayCard card)
+        public bool Damage(IEnumerable<Player> victims, PlayCard card, Player enemy)
         {
             if (!ReadyToAttack)
                 return false;
             new Thread(() => {
                 ReadyToAttack = false;
                 CurrentAttackNum++;
-                WaitingVictims.Add(CurrentAttackNum, new List<(Player, PlayCard)>());
-                WaitingVictims[CurrentAttackNum].AddRange(victims.Select(victim => (victim, card)));
+                WaitingVictims.Add(CurrentAttackNum, new List<(Player, PlayCard, Player)>());
+                WaitingVictims[CurrentAttackNum].AddRange(victims.Select(victim => (victim, card, enemy)));
                 var t = CurrentAttackNum;
                 Thread.Sleep(WaitTime);
                 if (t != CurrentAttackNum)
@@ -44,10 +44,9 @@ namespace BangGameLibrary
                 if (!WaitingVictims[CurrentAttackNum].Any(x => x.Item1 == victim))
                     return null;
                 var attackCardType = WaitingVictims[CurrentAttackNum].Find(x => x.Item1 == victim).Item2;
-                var remedyInHand = victim.Hand.Find(x => x.Type == CardInfo.AttackCardsToRemedies[attackCardType]);
+                var remedyInHand = victim.GetCardFromHand(attackCardType);
                 if (remedyInHand != null)
                 {
-                    victim.Hand.Remove(remedyInHand);
                     WaitingVictims[CurrentAttackNum].RemoveAll(x => x.Item1 == victim);
                     ReadyToAttack = !WaitingVictims[CurrentAttackNum].Any();
                     return remedyInHand;

@@ -56,7 +56,7 @@
     "MaxHealth": 4
   },
   {
-    "DistanceFromOthers": 0,
+    "DistanceFromOthers": 1,
     "SeeingDistance": 1,
     "SeeingAttackDistance": 0,
     "Hero": "PaulRegret",
@@ -64,7 +64,7 @@
   },
   {
     "DistanceFromOthers": 0,
-    "SeeingDistance": 1,
+    "SeeingDistance": 2,
     "SeeingAttackDistance": 0,
     "Hero": "PedroRamirez",
     "MaxHealth": 4
