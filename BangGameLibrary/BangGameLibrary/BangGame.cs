@@ -10,20 +10,21 @@ namespace BangGameLibrary
         private readonly Deck PlayDeck;
         public readonly List<Player> Players;
         private int CurrPlayerIndex = 0;
-        public bool CanPlayBang = true; 
+        private bool CanPlayBang = true; 
         private readonly AttackManager Attacks = new AttackManager();
         public event EventHandler OnTakeCardAwai;
         public event EventHandler OnBlock;
         public event EventHandler OnPlayerDeath;
         public event EventHandler OnPlayerHealthChange;
-        public event EventHandler OnPlayerAddedCardToHand;
-        public event EventHandler OnPlayerAddedCardToTable;
+        public event EventHandler OnPlayeHandChanged;
+        public event EventHandler OnPlayerTableChanged;
         public event EventHandler OnCardDrawn;
         public event EventHandler OnMixedPiles;
-        public event EventHandler OnCardAddedToPile;
+        public event PileChangeEventHandler OnCardAddedToPile;
         public event EventHandler OnNewRound;
         public event BangGameEventHandler OnUnableToPlayCard;
         public event BangGameEventHandler OnBlackJackDrawsExtraCard;
+        public event CardListEventHandler OnEmporioInvoked;
         
 
         public BangGame(List<string> names)
@@ -52,10 +53,11 @@ namespace BangGameLibrary
             Players.ForEach(x => x.OnDied += PlayerDeath);
             Players.ForEach(x => x.OnTakeDamage += PlayerHealthChanged);
             Players.ForEach(x => x.OnIncreaseHealth += PlayerHealthChanged);
-            Players.ForEach(x => x.OnCardAddedToHand += AddedCardToHand);
-            Players.ForEach(x => x.OnCardAddedToTable += AddedCardToTable);
+            Players.ForEach(x => x.OnHandChanged += AddedCardToHand);
+            Players.ForEach(x => x.OnTableChanged += AddedCardToTable);
             Players.ForEach(x => x.OnSuzyLafayetteHasNoCards += DrawCard);
             Players.ForEach(x => x.OnBartCasidyTakenDamage += DrawCard);
+            Players.ForEach(x => x.OnGringoTakenDamage += GringoTakeCard);
 
             PlayDeck.OnCardAddedToPile += CardAddedToPile;
             PlayDeck.OnDraw += CardDrawn;
@@ -104,6 +106,12 @@ namespace BangGameLibrary
                 PlayDeck.CardsToPile(CurrentPlayer.GetCards(cardsId));
         }
 
+        public void DiscardCard(int cardsId)
+        {
+            if (CurrentPlayer.SeeCard(cardsId) != null)
+                PlayDeck.CardToPile(CurrentPlayer.GetCard(cardsId));
+        }
+
         private Role? IsGameFinshed()
         {
             if (Players.All(x => x.RoleType == Role.Outlaw)) 
@@ -114,10 +122,17 @@ namespace BangGameLibrary
                 return Role.Renegate;
             return null;
         }
-
+       public void ApplyCardToPlayer(int card, string victim) 
+        {
+            ApplyCardToPlayer(CurrentPlayer.SeeCardFromHand(card), Players.Find(x => x.Name == victim));
+        } 
         public void ApplyCardToPlayer(Card card, Player victim)
         {
-            
+            if(card == null || victim == null)
+            {
+                OnUnableToPlayCard?.Invoke(this, new BangGameEventArgs("card is : " + card?.Type.ToString() + " victim is : " + victim?.Name));
+                return;
+            }
             if (CardInfo.IsSelfApplyCard(card))
             {
                 var tempCard = CurrentPlayer.ApplySelfCard(card);
@@ -136,12 +151,12 @@ namespace BangGameLibrary
                 OnUnableToPlayCard?.Invoke(this, new BangGameEventArgs("victim already has this type of card on table"));
                 return;
             }
-
+            
             switch (card.Type)
             {
                 case PlayCard.Missed:
                     OnUnableToPlayCard?.Invoke(this, new BangGameEventArgs("missed cant be played without being attacked"));
-                    break;
+                    return;
                 case PlayCard.Dynamite:
                     victim.AddCardOnTable(card);
                     break;
@@ -171,6 +186,9 @@ namespace BangGameLibrary
                 case PlayCard.Saloon:
                     Players.ForEach(x => x.IncreaseHeaht());
                     break;
+                case PlayCard.Emporio:
+                    OnEmporioInvoked?.Invoke(this, new ListOfCardsEventArgs(PlayDeck.Draw(4)));
+                    break;
             }
             PlayDeck.CardToPile(CurrentPlayer.GetCardFromHand(card.Id));
         }
@@ -187,7 +205,14 @@ namespace BangGameLibrary
             {
                 var drawnCards = PlayDeck.Draw(2);
                 if (drawnCards[1].Color == CardColor.diamond || drawnCards[1].Color == CardColor.heart)
+                {
+                    OnBlackJackDrawsExtraCard?.Invoke(this, new BangGameEventArgs("black jack has drawn 2 cards and his second card is of color" + drawnCards[1].Color.ToString() + " and of " + drawnCards[1].Type + "type, he will draw another card "));
                     CurrentPlayer.AddCardOnHand(PlayDeck.Draw());
+                }
+                else
+                {
+                    OnBlackJackDrawsExtraCard?.Invoke(this, new BangGameEventArgs("black jack has drawn 2 cards and his second card is of color" + drawnCards[1].Color.ToString() + " and of " + drawnCards[1].Type + "type, he will not draw another card "));
+                }
                 CurrentPlayer.AddCardsOnHand(drawnCards);
             }
             StartTurnEvaluateCards();
@@ -231,23 +256,40 @@ namespace BangGameLibrary
             }
         }
 
+        public void ApplyCardToCard(int attackCard, string victim, int victimCard)
+        {
+            var vic = Players.Find(x => x.Name == victim);
+            ApplyCardToCard(CurrentPlayer.SeeCardFromHand(attackCard), vic, vic.SeeCard(victimCard));
+        }
+
         public void ApplyCardToCard(Card myCard, Player victim, Card victimCard)
         {
+            if (myCard == victimCard || (myCard.Type != PlayCard.CatBalou && myCard.Type != PlayCard.CatBalou))
+            {
+                OnUnableToPlayCard?.Invoke(this, new BangGameEventArgs("this card waas not ment for this"));
+                return;
+            }
             if (Distance(CurrentPlayer, victim) > CurrentPlayer.SeeingDistance)
             {
                 OnUnableToPlayCard?.Invoke(this, new BangGameEventArgs("victim is too far away"));
                 return;
             }
-            if (victim.SeeCards(new int[] { victimCard.Id })?[0] != null)
+            if (victim.SeeCards(new int[] { victimCard.Id }) == null)
             {
-                OnUnableToPlayCard?.Invoke(this, new BangGameEventArgs("enemy has no cards"));
+                OnUnableToPlayCard?.Invoke(this, new BangGameEventArgs(victim + " enemy has no cards for " + CurrentPlayer.Name));
                 return;
             }
             OnTakeCardAwai?.Invoke(this, EventArgs.Empty);
             if (myCard.Type == PlayCard.CatBalou)
+            {
                 PlayDeck.CardToPile(victim.GetCard(victimCard.Id));
+                PlayDeck.CardToPile(victim.GetCard(myCard.Id));
+            }
             if (myCard.Type == PlayCard.Panic)
+            {
                 CurrentPlayer.AddCardOnHand(victim.GetCard(victimCard.Id));
+                PlayDeck.CardToPile(victim.GetCard(myCard.Id));
+            }
         }
 
         public bool BlockAttackByBarel(Player victim)
@@ -325,18 +367,29 @@ namespace BangGameLibrary
         }
         private void PlayerHealthChanged(Object p, EventArgs e) => OnPlayerHealthChange?.Invoke(p, e);
         private void CassidyTakeDamage(Object p, EventArgs e) => OnPlayerHealthChange?.Invoke(p, e);
-        private void CardAddedToPile(Object p, EventArgs e) => OnCardAddedToPile?.Invoke(p, e);
+        private void CardAddedToPile(Object p, PileInfoEventArgs e) => OnCardAddedToPile?.Invoke(p, e);
 
         private void CardDrawn(Object p, EventArgs e) => OnCardDrawn?.Invoke(p, e);
 
         private void PilesMixed(Object p, EventArgs e) => OnMixedPiles?.Invoke(p, e);
 
-        private void AddedCardToHand(Object p, EventArgs e) => OnPlayerAddedCardToHand?.Invoke(p, e);
-        private void AddedCardToTable(Object p, EventArgs e) => OnPlayerAddedCardToTable?.Invoke(p, e);
+        private void AddedCardToHand(Object p, EventArgs e) => OnPlayeHandChanged?.Invoke(p, e);
+        private void AddedCardToTable(Object p, EventArgs e) => OnPlayerTableChanged?.Invoke(p, e);
         private void DrawCard(Object p, EventArgs e)
         {
             Player suzzy = (Player)p;
             suzzy.AddCardOnHand(PlayDeck.Draw());
+        }
+
+        private void GringoTakeCard(object p, DisputeEventArgs e)
+        {
+            Player gringo = (Player)p;
+            Player attaker = e.Attacker;
+            var random = new Random();
+            int index = random.Next(attaker.Hand.Count);
+            gringo.AddCardOnHand(
+                attaker.GetCard(attaker.Hand[index].Id)
+                );
         }
 
     }

@@ -109,6 +109,35 @@
             });
     }
 
+    cardApplied(cardId, dropId) {
+        cardId = cardId.split("-")[0];
+        let myName = document.getElementById("heroName").innerText;
+        if (dropId == "userImage") {
+            this.hub.server.appliedCardToUser(cardId, document.getElementById("heroName").innerText);
+            //console.log("card used on me " + cardId + " " + myName);
+            return;
+        }
+        if (dropId == "pile") {
+            this.hub.server.discard(cardId);
+            //console.log("discard", cardId);
+            return;
+        }
+        let splitId = dropId.split("-");
+        if (splitId.length == 3 && splitId[1] == "card") {
+            //cardId, toCardId, victimUsername
+            if (splitId[2] == "this")
+                splitId[2] = myName;
+            this.hub.server.appliedCardToCard(cardId, splitId[0], splitId[2]);
+            //console.log("card " + cardId + " has been applied to card " + splitId[0] + " of " + splitId[2]);
+        }
+        if (splitId.length == 2 && splitId[1] == "roleImage") {
+
+            this.hub.server.appliedCardToUser(cardId, splitId[0]);
+            //console.log("card " +  cardId + " used on " + splitId[0]);
+        }
+        
+    }
+
     gameStarter() {
         myHub.server.newGameSetUp()
             .done(function (val ) {

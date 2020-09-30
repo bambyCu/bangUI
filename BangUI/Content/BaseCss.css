@@ -78,6 +78,7 @@ th, td {
     background-color: #3c3c49;
     color: white;
     text-align: center;
+    overflow:scroll;
 }
 
 .modal {

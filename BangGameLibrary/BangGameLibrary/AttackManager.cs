@@ -6,7 +6,7 @@ namespace BangGameLibrary
 {
     internal class AttackManager
     {
-        public Dictionary<int,List<(Player,PlayCard, Player)>> WaitingVictims = new Dictionary<int, List<(Player, PlayCard, Player)>>();
+        public Dictionary<int,List<(Player,PlayCard)>> WaitingVictims = new Dictionary<int, List<(Player, PlayCard)>>();
         private int CurrentAttackNum = 0;
         public bool ReadyToAttack { get; private set; }
         private readonly int WaitTime = 3000;
@@ -24,13 +24,13 @@ namespace BangGameLibrary
             new Thread(() => {
                 ReadyToAttack = false;
                 CurrentAttackNum++;
-                WaitingVictims.Add(CurrentAttackNum, new List<(Player, PlayCard, Player)>());
-                WaitingVictims[CurrentAttackNum].AddRange(victims.Select(victim => (victim, card, enemy)));
+                WaitingVictims.Add(CurrentAttackNum, new List<(Player, PlayCard)>());
+                WaitingVictims[CurrentAttackNum].AddRange(victims.Select(victim => (victim, card)));
                 var t = CurrentAttackNum;
                 Thread.Sleep(WaitTime);
                 if (t != CurrentAttackNum)
                     return;
-                WaitingVictims[t].ForEach(x => x.Item1.TakeDamage());
+                WaitingVictims[t].ForEach(x => x.Item1.TakeDamage(enemy));
                 //WaitingVictims[t].ForEach(x => Console.WriteLine("-----------------------------------------"));
                 WaitingVictims.Remove(t);
                 ReadyToAttack = t == CurrentAttackNum;

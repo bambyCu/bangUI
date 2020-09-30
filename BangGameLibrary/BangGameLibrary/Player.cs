@@ -24,10 +24,11 @@ namespace BangGameLibrary
         public event EventHandler OnTakeDamage;
         public event EventHandler OnIncreaseHealth;
         public event EventHandler OnDied;
-        public event EventHandler OnCardAddedToHand;
-        public event EventHandler OnCardAddedToTable;
+        public event CardListEventHandler OnHandChanged;
+        public event CardListEventHandler OnTableChanged;
         public event EventHandler OnSuzyLafayetteHasNoCards;
         public event EventHandler OnBartCasidyTakenDamage;
+        public event TwoPlayerDisputeEventHandler OnGringoTakenDamage;
 
 
 
@@ -53,10 +54,11 @@ namespace BangGameLibrary
             MaxHealth = maxHealt;
         }
 
-        
+
         //all functions that return Card return object that is to be placed into used pile
         private Card RemoveBlueCard(Card c)
         {
+
             Card card = SeeCardFromTable(c.Id) ?? throw new ArgumentException("invalid argument");
             if (CardInfo.IsCardGun(card))
                 AttackDistance -= CardInfo.GunDistance(card.Type);
@@ -65,13 +67,14 @@ namespace BangGameLibrary
             if (card.Type == PlayCard.Mirino)
                 SeeingDistance -= 1;
             _cardsOnTable.Remove(card);
+            OnTableChanged?.Invoke(this, new ListOfCardsEventArgs(CardsOnTable));
             return card;
         }
 
         //can apply ane blue card 
         private Card ApplyBlueCard(Card c)
         {
-            if (_cardsOnTable.Find(f => f.Type  == c.Type) != null)//if same card type is at play, just throw new card into pile
+            if (_cardsOnTable.Find(f => f.Type == c.Type) != null)//if same card type is at play, just throw new card into pile
                 return c;
             Card temp = null;
             if (c.Type == PlayCard.Mirino) { SeeingDistance++; }
@@ -91,6 +94,9 @@ namespace BangGameLibrary
                 }
             }
             _cardsOnTable.Add(c);
+            _hand.Remove(c);
+            OnTableChanged?.Invoke(this, new ListOfCardsEventArgs(CardsOnTable));
+            OnHandChanged?.Invoke(this, new ListOfCardsEventArgs(Hand));
             return temp;
         }
 
@@ -98,8 +104,8 @@ namespace BangGameLibrary
         {
             if (!CardInfo.IsSelfApplyCard(c))
                 throw (new Exception("Card that needs to be managed by Game class is sent to player"));
-            if (CardInfo.IsCardBlue(c)) 
-                return ApplyBlueCard(c); 
+            if (CardInfo.IsCardBlue(c))
+                return ApplyBlueCard(c);
             if (c.Type == PlayCard.Beer)
             {
                 if (Health < MaxHealth) { Health++; }
@@ -111,7 +117,7 @@ namespace BangGameLibrary
         }
         public bool HasOnTable(PlayCard cardType) =>
             CardsOnTable.Any(x => x.Type == cardType);
-        
+
         public void TakeDamage(int amount)
         {
 
@@ -123,6 +129,17 @@ namespace BangGameLibrary
             OnTakeDamage?.Invoke(this, EventArgs.Empty);
         }
 
+        public void TakeDamage(Player attacker)
+        {
+            if (HeroType == Hero.ElGringo)
+            {
+                OnGringoTakenDamage?.Invoke(this, new DisputeEventArgs(attacker));
+            }
+            TakeDamage(1);
+        }
+
+
+
         public void TakeDamage() => TakeDamage(1);
 
         public void IncreaseHeaht() => IncreaseHealthBy(1);
@@ -133,6 +150,11 @@ namespace BangGameLibrary
             OnIncreaseHealth?.Invoke(this, EventArgs.Empty);
         }
 
+        public Card SeeCard(int id)
+        {
+            var temp = SeeCards(new int[] { id }.ToList()) ;
+            return (temp.Count > 0) ? temp[0] : null;
+        } 
         public List<Card> SeeCards(IEnumerable<int> ids) => SeeCardsFromHand(ids).Concat(SeeCardsFromTable(ids)).ToList();
 
         public Card SeeCardFromHand(int id) => _hand.Find(x => x.Id == id);
@@ -146,27 +168,32 @@ namespace BangGameLibrary
         public Card GetCard(int id) => (SeeCardFromTable(id) != null) ? GetCardFromTable(id) : GetCardFromHand(id);
         public List<Card> GetCards(int[] ids) => GetCardsFromTable(ids).Concat(GetCardsFromHand(ids)).ToList();
 
-        public Card GetCardFromHand(int id) => GetCardsFromHand(new int[] { id })?[0];
-        public Card GetCardFromHand(PlayCard type) => GetCardsFromHand(new PlayCard[] { type })?[0];
-        public Card GetCardFromTable(int id) => GetCardsFromTable(new int[] { id })?[0];
-        public Card GetCardFromTable(PlayCard type) => GetCardsFromTable(new PlayCard[] { type })?[0];
+        public Card GetCardFromHand(int id) => (SeeCardFromHand(id) != null) ? GetCardsFromHand(new int[] { id })[0] : null;
+        public Card GetCardFromHand(PlayCard type) => (Hand.Any(x => x.Type == type)) ?  GetCardsFromHand(new PlayCard[] { type })[0] : null;
+        public Card GetCardFromTable(int id) => (CardsOnTable.Any(x => x.Id == id)) ?GetCardsFromTable(new int[] { id })?[0] : null;
+        public Card GetCardFromTable(PlayCard type) => (CardsOnTable.Any(x => x.Type == type)) ? GetCardsFromTable(new PlayCard[] { type })?[0] : null;
         public List<Card> GetCardsFromHand(IEnumerable<int> ids)
         {
+            
             var cards = _hand.FindAll(x => ids.Contains(x.Id));
             _hand.RemoveAll(x => ids.Contains(x.Id));
             if (!_hand.Any())
                 OnSuzyLafayetteHasNoCards?.Invoke(this, EventArgs.Empty);
+            OnHandChanged?.Invoke(this, new ListOfCardsEventArgs(Hand));
             return cards;
         }
         public List<Card> GetCardsFromHand(IEnumerable<PlayCard> types)
         {
+            
             var cards = _hand.FindAll(x => types.Contains(x.Type));
             _hand.RemoveAll(x => types.Contains(x.Type));
+            OnHandChanged?.Invoke(this, new ListOfCardsEventArgs(Hand));
             return cards;
         }
 
         public List<Card> GetCardsFromTable(IEnumerable<int> ids)
         {
+            OnTableChanged?.Invoke(this, new ListOfCardsEventArgs(CardsOnTable));
             List<Card> output = new List<Card>();
             foreach (Card i in _cardsOnTable)
             {
@@ -177,6 +204,7 @@ namespace BangGameLibrary
         }
         public List<Card> GetCardsFromTable(IEnumerable<PlayCard> types)
         {
+            OnTableChanged?.Invoke(this, new ListOfCardsEventArgs(CardsOnTable));
             var cards = _cardsOnTable.FindAll(x => types.Contains(x.Type));
             _cardsOnTable.RemoveAll(x => types.Contains(x.Type));
             return cards;
@@ -185,13 +213,13 @@ namespace BangGameLibrary
         public void AddCardOnHand(Card card) => AddCardsOnTable(new Card[] { card });
         public void AddCardsOnHand(IEnumerable<Card> cards)
         {
-            OnCardAddedToHand?.Invoke(this, EventArgs.Empty);
+            OnHandChanged?.Invoke(this, new ListOfCardsEventArgs(cards.ToList()));
             _hand.AddRange(cards);
         }
         public void AddCardOnTable(Card card) => AddCardsOnTable(new Card[] { card });
         public void AddCardsOnTable(IEnumerable<Card> cards)
         {
-            OnCardAddedToTable?.Invoke(this, EventArgs.Empty);
+            OnTableChanged?.Invoke(this, new ListOfCardsEventArgs(cards.ToList()));
             _cardsOnTable.AddRange(cards);
         }
 

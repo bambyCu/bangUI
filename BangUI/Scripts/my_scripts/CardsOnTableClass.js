@@ -1,14 +1,15 @@
 ﻿class CardsOnTable {
-    constructor(idOfTableElement, massFunction) {
+    constructor(idOfTableElement, massFunction, salt) {
         this.tableId = idOfTableElement;
         this.inFunction = massFunction;
         this.cards = [];
-        this.salt = "theCard";
+        this.salt = salt;
     }
 
     
 
     addImageElement(id, byteArray) {
+        id += this.salt;
         let newImage = document.createElement("img");
         this.cards.push(id);
         document.getElementById(this.tableId).appendChild(newImage);
@@ -36,6 +37,13 @@
             this.cards.splice(index, 1);
         }
         this.setUpCards();
+    }
+
+    removeAll() {
+        for (let i = this.cards.length-1; i >= 0; i--) {
+            document.getElementById(this.cards[i]).remove();
+        }
+        this.cards = [];
     }
 
     setUpCards() {

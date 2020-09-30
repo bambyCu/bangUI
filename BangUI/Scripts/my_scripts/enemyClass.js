@@ -15,7 +15,7 @@
         div.appendChild(this.generateImage());
         div.appendChild(this.generateStatsTable());
         div.appendChild(this.generateCardsTable());
-        this.table = new CardsOnTable(this.idCardsOnTable, (x) => makeElementApplicableTo(x));
+        this.table = new CardsOnTable(this.idCardsOnTable, (x) => makeElementApplicableTo(x), "-card-" + this.username);
         this.cardsOnTable.forEach(x => this.table.addImageElement(x.id, x.image));
         return div;
     }

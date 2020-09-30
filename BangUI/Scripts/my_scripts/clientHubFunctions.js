@@ -8,7 +8,7 @@ $.connection.mainHub.client.invitation = function (team) {
 }
 
 $.connection.mainHub.client.addMessage = function (text) {
-    document.getElementById("messages").innerHTML += "message" + text;
+    document.getElementById("messages").innerHTML += text + "<br />";
 }
 
 $.connection.mainHub.client.logIn = function (text) {
@@ -50,5 +50,33 @@ $.connection.mainHub.client.setMeUp = function (myInfo) {
     document.getElementById("heroRole").innerText = myInfo.RoleType;
     document.getElementById("heroName").innerText = myInfo.Name;
 }
+
+$.connection.mainHub.client.reloadHand = function (cardIdToImageName) {
+    hand.removeAll();
+    cardIdToImageName.forEach(x => hand.addImageElement(x.Id, myHub.cardImages[x.CardType]));
+}
+
+$.connection.mainHub.client.reloadTable = function (cardIdToImageName) {
+    table.removeAll();
+    cardIdToImageName.forEach(x => () => {
+        if (!document.getElementById(x.Id))
+            hand.removeCard(x.Id);
+    });
+    cardIdToImageName.forEach(x => table.addImageElement(x.Id, myHub.cardImages[x.CardType]));
+}
+
+$.connection.mainHub.client.setDeckSize = function (size) {
+    document.getElementById("deckAmount").innerText = size;
+}
+
+$.connection.mainHub.client.setPileInfo = function (size, imageName) {
+    document.getElementById("pileAmount").innerText = size;
+    document.getElementById("pile").src = "data:image/png;base64," + myHub.cardImages[imageName];
+}
+
+
+
+
+
 
 

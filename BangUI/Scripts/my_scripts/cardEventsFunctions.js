@@ -28,6 +28,6 @@ function beginPlayingCardEvent(inputEvent) {
 function applyCardEvent(inputEvent) {
     var data = inputEvent.dataTransfer.getData("text");
     console.log("started on ", data, "droped on", inputEvent.target.id);
-
+    myHub.cardApplied(data, inputEvent.target.id)
     //ev.target.appendChild(document.getElementById(data));
 }

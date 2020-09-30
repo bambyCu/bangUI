@@ -10,13 +10,13 @@ namespace BangGameLibrary
         private readonly List<Card> CardsInPile = new List<Card>();
         public event EventHandler OnDraw;
         public event EventHandler OnMixPiles;
-        public event EventHandler OnCardAddedToPile;
+        public event PileChangeEventHandler OnCardAddedToPile;
 
         public Deck(List<Card> cardsToDeck)
         {
             if(cardsToDeck.Count == 0)
                 throw (new Exception("Deck has no input cards for set up in constructor"));
-            CardsInDeck = cardsToDeck;
+            CardsInDeck.AddRange( cardsToDeck);
             Shuffle();
         }
         //this code has been donated from StackOverflow
@@ -68,16 +68,19 @@ namespace BangGameLibrary
         //function ignores null
         public void CardToPile(Card c)
         {
-            OnCardAddedToPile?.Invoke(this, EventArgs.Empty);
-            if (c != null)
-                CardsInPile.Add(c);
+            if (c == null)
+                return;
+            CardsInPile.Add(c);
+            OnCardAddedToPile?.Invoke(this, new PileInfoEventArgs(TopOfPile(), CardsInPile.Count, CardsInDeck.Count));
+
         }
 
         public void CardsToPile(IEnumerable<Card> c)
         {
-            OnCardAddedToPile?.Invoke(this, EventArgs.Empty);
-            if (c != null)
-                CardsInPile.AddRange(c);
+            if (c == null)
+                return;
+            CardsInPile.AddRange(c);
+            OnCardAddedToPile?.Invoke(this, new PileInfoEventArgs(TopOfPile(), CardsInPile.Count, CardsInDeck.Count));
         }
 
         public Card TopOfPile()

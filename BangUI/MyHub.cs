@@ -91,6 +91,7 @@ namespace SignalRTutorial
             {
                 if (UsersToConnections.Keys.Contains(userName)) { return "taken"; }
                 UsersToConnections.Add(userName, Context.ConnectionId);
+                ConnectionsToUsers.Add(Context.ConnectionId, userName);
             }
             Clients.All.LogIn(userName);
             return "correct";
@@ -119,7 +120,7 @@ namespace SignalRTutorial
 
         public bool Mess(string text)
         {
-            Clients.All.AddMessage(text.ToCharArray());
+            Clients.All.AddMessage(text);
             return true;
         }
 
@@ -195,6 +196,7 @@ namespace SignalRTutorial
                     }
                 });
             */
+            Mess("begin game");
             var game = new BangGame(names.ToList());
             var gameInfo = game
                 .Players
@@ -219,6 +221,42 @@ namespace SignalRTutorial
                 {
                     Clients.Client(UsersToConnections[i.Name]).beginGameInfo(gameInfo);
                     Clients.Client(UsersToConnections[i.Name]).setMeUp(new { Hand = i.Hand.Select(x => new { Id = x.Id, CardType = x.Type.ToString() }), Health = i.Health, RoleType = i.RoleType.ToString(), Name = i.Name, HeroType = i.HeroType.ToString() });
+                    lock (CurrGames)
+                    {
+                        CurrGames.Add(i.Name, game);
+                    }
+                    game.OnUnableToPlayCard += (sender, args) =>
+                    {
+                        var temp = (BangGameEventArgs)args;
+                        Mess(temp.Message);
+                    };
+                    game.OnCardDrawn += (sender, args) => {
+                        Mess("card has been drawn");
+                    };
+                    game.OnPlayeHandChanged += (sender, args) => {
+                        var t = (Player)sender;
+                        var arg = (ListOfCardsEventArgs)args;
+                        Mess(t.Name + " changed hand to " + arg.Cards.Aggregate("", (ret, item) => ret += " " + item.Type.ToString()));
+                        Clients.Client(UsersToConnections[t.Name]).reloadHand(arg.Cards.Select(x => new { Id = x.Id, CardType = x.Type.ToString() }).ToArray());
+                    };
+                    game.OnPlayerTableChanged += (sender, args) => {
+                        var t = (Player)sender;
+                        var arg = (ListOfCardsEventArgs)args;
+                        Mess(t.Name + " changed table to " + arg.Cards.Aggregate("", (ret, item) => ret += " " + item.Type.ToString()));
+                        Clients.Client(UsersToConnections[t.Name]).reloadTable(arg.Cards.Select(x => new { Id = x.Id, CardType = x.Type.ToString() }).ToArray());
+                    };
+                    game.OnCardAddedToPile += (sender, args) =>
+                    {
+                        var evRags = (PileInfoEventArgs)args;
+                        Mess("pile top: " + evRags?.Top?.Type.ToString() + " deck size: " + evRags?.DeckSize + " pile size: " + evRags?.PileSize);
+                        game.Players.ForEach(x => Clients.Client(UsersToConnections[x.Name]).setPileSize(evRags.PileSize, evRags.Top.Type.ToString()));
+                    };
+                    game.OnPlayerHealthChange += (sender, args) =>
+                    {
+                        var user = (Player)sender;
+                        Mess("name: " + user.Name + " health: " + user.Health);
+                        //Clients.Client.setDeckSize()
+                    };
                 }
             }
         }
@@ -236,48 +274,30 @@ namespace SignalRTutorial
             return base.OnDisconnected(stopCalled);
         }
 
-        /*public bool ApplyGameIdCardTo(string gameId, string cardId, string target)
-        {
-            string mess;
-            lock (CurrGames)
-            {
-                if (CurrGames[gameId].CurrentPlayer.Name != Name())
-                {
-                    lock (UsersToConnections)
-                    {
-                        //Clients.Client(Connections[Name()]).Message("it is not your turn");
-                        //handled on client
-                    }
-                    return false;
-                }
-                if (!CurrGames.ContainsKey(gameId)) { return false; }
-                if (!CurrGames[gameId].Names.Contains(target)) { return false; }
-                CurrGames[gameId].applyCard(Name(), cardId, target);
-                mess = CurrGames[gameId].LastMessage;
-            }
-            
-            if (mess != "")
-            {
-                lock (UsersToConnections)
-                {
-                    foreach (Player i in CurrGames[gameId].Players)
-                    {
-                        Clients.Client(UsersToConnections[i.Name]).addToMessageList(mess);
-                    }
-                }
-            }
-            UpdateGame(gameId);
-            
-            return true;
-        }*/
 
-        
+        public void AppliedCardToCard(string cardId, string victimCard, string victim)
+        {
+            if (Int32.TryParse(cardId, out int attackId) && Int32.TryParse(victimCard, out int victimCardId))
+            {
+                MyGame().ApplyCardToCard(attackId, victim, victimCardId);
+            }
+        }
+
+        public void AppliedCardToUser(string cardId, string victim)
+        {
+            if (Int32.TryParse(cardId, out int attackId))
+            {
+                MyGame().ApplyCardToPlayer(attackId, victim);
+            }
+        }
+
+
         public void Discard(int cardId)
         {
             lock (CurrGames)
             {
                 var game = CurrGames[ConnectionsToUsers[Context.ConnectionId]];
-                game.DiscardCard(Name, cardId);
+                game.DiscardCard(cardId);
             }
         }
         /*public void EndTurn()

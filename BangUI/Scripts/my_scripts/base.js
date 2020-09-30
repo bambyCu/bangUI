@@ -4,10 +4,13 @@ const myHub = new Hub($.connection.mainHub,
     new modalMaster("users-modal", "users-modal-content", "users-modal-header"),//needs to be set up in window.onload
     new modalMaster("invite-modal", "invite-modal-content", "invite-modal-header")//needs to be set up in window.onload
 );
-const hand = new CardsOnTable("handDiv", (x) => {
+const hand = new CardsOnTable(
+    "handDiv", (x) => {
     makeElementPlayable(x); makeElementApplicableTo(x);
-});
-const table = new CardsOnTable("tableDiv", (x) => makeElementApplicableTo(x)); 
+},
+    "-card-this-hand"
+);
+const table = new CardsOnTable("tableDiv", (x) => makeElementApplicableTo(x), "-card-this-table"); 
 const enemyList = new enemies("enemyNames", "enemyDiv");
 const myModal = new modalMaster("bangModal", "modalContent", "modalHeader");
 
